@@ -6,14 +6,17 @@ For example:
 
 `printDiamond('C')` prints
 
+```
   A
  B B
 C   C
  B B
   A
+```
 
 `printDiamond('E')` prints
 
+```
     A
    B B
   C   C
@@ -23,3 +26,4 @@ E       E
   C   C
    B B
     A
+```
