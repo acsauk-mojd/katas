@@ -15,4 +15,10 @@ class FizzbuzzTest extends TestCase
         $sut = new Fizzbuzz();
         self::assertEquals('2', $sut->fizzbuzzer('2'));
     }
+
+    public function testProgramCanBePReturnsFizz()
+    {
+        $sut = new Fizzbuzz();
+        self::assertEquals('Fizz', $sut->fizz('Fizz'));
+    }
 }
