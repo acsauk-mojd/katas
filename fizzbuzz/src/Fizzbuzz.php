@@ -6,4 +6,9 @@ class Fizzbuzz
     {
         return $number;
     }
+
+    public function fizz(string $word)
+    {
+        return 'Fizz';
+    }
 }

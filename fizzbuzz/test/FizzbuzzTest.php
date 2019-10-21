@@ -21,4 +21,11 @@ class FizzbuzzTest extends TestCase
         $sut = new Fizzbuzz();
         self::assertEquals('Fizz', $sut->fizz('Fizz'));
     }
+
+    public function testIfInputIsANumber()
+    {
+        $this->expectException('Exception');
+        $sut = new Fizzbuzz();
+        $sut->fizzbuzzer('Exception');
+    }
 }
