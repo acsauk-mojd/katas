@@ -4,7 +4,10 @@ class Fizzbuzz
 {
     public function fizzbuzzer(string $number)
     {
-        return $number;
+        if(is_numeric($number)) {
+            return $number;
+        }
+        throw new Exception("Error Processing Request", 1);
     }
 
     public function fizz(string $word)

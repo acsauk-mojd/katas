@@ -10,12 +10,6 @@ class FizzbuzzTest extends TestCase
         self::assertEquals('1', $sut->fizzbuzzer('1'));
     }
 
-    public function testProgramCanBePassed2AndReturns2()
-    {
-        $sut = new Fizzbuzz();
-        self::assertEquals('2', $sut->fizzbuzzer('2'));
-    }
-
     public function testProgramCanBePReturnsFizz()
     {
         $sut = new Fizzbuzz();
@@ -27,5 +21,11 @@ class FizzbuzzTest extends TestCase
         $this->expectException('Exception');
         $sut = new Fizzbuzz();
         $sut->fizzbuzzer('Exception');
+    }
+
+    public function testProgramGetsRemainderOfNumber()
+    {
+        $sut = new Fizzbuzz();
+        self::assertEquals('1', $sut->fizzRemainder('3','3'));
     }
 }
