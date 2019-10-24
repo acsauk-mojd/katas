@@ -1,17 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class Fizzbuzz
 {
-    public function fizzbuzzer(string $number)
+    public function fizzbuzzer(int $number)
     {
-        if(is_numeric($number)) {
-            return $number;
+        if(is_int($number)) {
+            return $this->fizzRemainder($number, 3);
         }
         throw new Exception("Error Processing Request", 1);
     }
 
-    public function fizz(string $word)
+    public function fizzRemainder(int $number, int $divisor)
     {
-        return 'Fizz';
+        if($divisor === 3) {
+            if ($number % $divisor === 0) {
+                return 'Fizz';
+            }
+            return $number;
+        }
+        return $number;
     }
 }

@@ -7,25 +7,31 @@ class FizzbuzzTest extends TestCase
     public function testProgramCanBePassed1AndReturns1()
     {
         $sut = new Fizzbuzz();
-        self::assertEquals('1', $sut->fizzbuzzer('1'));
+        self::assertEquals(1, $sut->fizzbuzzer(1));
     }
 
-    public function testProgramCanBePReturnsFizz()
+    /**
+     * @dataProvider remainderProvider
+     */
+    public function testProgramGetsRemainderOfNumberThree($result, int $number, int $dividor)
     {
         $sut = new Fizzbuzz();
-        self::assertEquals('Fizz', $sut->fizz('Fizz'));
+        self::assertEquals($result, $sut->fizzRemainder($number,$dividor));
     }
 
-    public function testIfInputIsANumber()
+    public function remainderProvider()
     {
-        $this->expectException('Exception');
-        $sut = new Fizzbuzz();
-        $sut->fizzbuzzer('Exception');
+        return [
+            ['Fizz', 3, 3],
+            [4, 4, 3],
+            [2, 2, 2],
+        ];
     }
 
-    public function testProgramGetsRemainderOfNumber()
+    public function testProgramStartsApp()
     {
         $sut = new Fizzbuzz();
-        self::assertEquals('1', $sut->fizzRemainder('3','3'));
+        self::assertEquals('Fizz', $sut->fizzbuzzer(3));
+
     }
 }
