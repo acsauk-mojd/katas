@@ -7,7 +7,7 @@ class FizzbuzzTest extends TestCase
     public function testProgramCanBePassed1AndReturns1()
     {
         $sut = new Fizzbuzz();
-        self::assertEquals(1, $sut->startFizzBuzzer(1));
+        self::assertEquals(1, $sut->startFizzBuzzer([1]));
     }
 
     /**
