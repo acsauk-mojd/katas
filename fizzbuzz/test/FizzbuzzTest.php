@@ -7,31 +7,35 @@ class FizzbuzzTest extends TestCase
     public function testProgramCanBePassed1AndReturns1()
     {
         $sut = new Fizzbuzz();
-        self::assertEquals(1, $sut->fizzbuzzer(1));
+        self::assertEquals(1, $sut->startFizzBuzzer(1));
     }
 
     /**
      * @dataProvider remainderProvider
+     * @group fish
      */
-    public function testProgramGetsRemainderOfNumberThree($result, int $number, int $dividor)
+    public function testProgramLogic($result, int $number)
     {
         $sut = new Fizzbuzz();
-        self::assertEquals($result, $sut->fizzRemainder($number,$dividor));
+        self::assertEquals($result, $sut->returnFizzOrBuzzOrANumber($number));
     }
 
     public function remainderProvider()
     {
         return [
-            ['Fizz', 3, 3],
-            [4, 4, 3],
-            [2, 2, 2],
+            '9 divided by 3 returns Fizz'                      => ['Fizz', 9],
+            '12 divided by 3 returns Fizz'                     => ['Fizz', 12],
+            '4 divided by 3 returns the number passed in (4)'  => [4, 4],
+            '2 divided by 2 returns the number passed in (2)'  => [2, 2],
+            '5 divided by 5 returns Buzz'                      => ['Buzz', 5],
+            '15 divided by 5 returns Buzz'                     => ['FizzBuzz', 15],
         ];
     }
 
     public function testProgramStartsApp()
     {
         $sut = new Fizzbuzz();
-        self::assertEquals('Fizz', $sut->fizzbuzzer(3));
+        self::assertEquals('Fizz', $sut->startFizzBuzzer(3));
 
     }
 }
