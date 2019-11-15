@@ -4,27 +4,36 @@ declare(strict_types=1);
 
 class Fizzbuzz
 {
-    public function startFizzBuzzer(array $number)
+    public function startFizzBuzzer(array $numbers)
     {
-            return $this->returnFizzOrBuzzOrANumber($number);
+            return $this->returnFizzOrBuzzOrANumber($numbers);
     }
 
-    public function returnFizzOrBuzzOrANumber(array $number)
+    public function returnFizzOrBuzzOrANumber(array $numbers)
     {
-         $number = $number[0];
+        $result = [];
 
-        if($number % 3 === 0 && $number % 5 === 0) {
-                return 'FizzBuzz';
+        foreach ($numbers as $number) {
+
+            if($number % 3 === 0 && $number % 5 === 0) {
+                $result[] = 'FizzBuzz';
+                continue;
+            }
+
+            elseif($number % 3 === 0) {
+                $result[] = 'Fizz';
+                continue;
+            }
+
+            elseif($number % 5 === 0) {
+                $result[] = 'Buzz';
+                continue;
+            }
+
+            $result[] = $number;
         }
 
-        if($number % 3 === 0) {
-                return 'Fizz';
-            }
+        return $result;
 
-        if($number % 5 === 0) {
-                return 'Buzz';
-            }
-
-        return $number;
     }
 }
