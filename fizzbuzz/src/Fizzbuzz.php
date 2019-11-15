@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 class Fizzbuzz
 {
-    public function startFizzBuzzer(int $number)
+    public function startFizzBuzzer(array $number)
     {
-        if(is_int($number)) {
             return $this->returnFizzOrBuzzOrANumber($number);
-        }
-        throw new Exception("Error Processing Request", 1);
     }
 
-    public function returnFizzOrBuzzOrANumber(int $number)
+    public function returnFizzOrBuzzOrANumber(array $number)
     {
+         $number = $number[0];
+
         if($number % 3 === 0 && $number % 5 === 0) {
                 return 'FizzBuzz';
         }
