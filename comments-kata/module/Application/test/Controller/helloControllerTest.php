@@ -24,6 +24,13 @@ class HelloControllerTest extends AbstractHttpControllerTestCase
             $configOverrides
         ));
         parent::setUp();
+
+//        $services = $this->getApplicationServiceLocator();
+//        $config = $services->get('config');
+//        unset($config['db']);
+//        $services->setAllowOverride(true);
+//        $services->setService('config', $config);
+//        $services->setAllowOverride(false);
     }
 
     public function testIndexActionCanBeAccessed()
@@ -35,4 +42,5 @@ class HelloControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('HelloController');
         $this->assertMatchedRouteName('world');
     }
+
 }

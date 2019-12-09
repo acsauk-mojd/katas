@@ -34,6 +34,7 @@ class ComposerStaticInitcab83d378f450243324ae5c3c397c383
             'Zend\\EventManager\\' => 18,
             'Zend\\Escaper\\' => 13,
             'Zend\\Dom\\' => 9,
+            'Zend\\Db\\' => 8,
             'Zend\\Console\\' => 13,
             'Zend\\Config\\' => 12,
             'Zend\\ComponentInstaller\\' => 24,
@@ -134,6 +135,10 @@ class ComposerStaticInitcab83d378f450243324ae5c3c397c383
         'Zend\\Dom\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-dom/src',
+        ),
+        'Zend\\Db\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-db/src',
         ),
         'Zend\\Console\\' => 
         array (

@@ -49,7 +49,12 @@ return [
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
-            Controller\HelloController::class => InvokableFactory::class,
+//            Controller\HelloController::class => InvokableFactory::class,
+            Controller\HelloController::class => function($container) {
+                    return new Controller\HelloController(
+                        $container->get(Model\HelloTable::class)
+                    );
+                },
         ],
     ],
     'view_manager' => [

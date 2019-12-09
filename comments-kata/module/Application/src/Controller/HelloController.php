@@ -13,6 +13,20 @@ use Zend\View\Model\ViewModel;
 
 class HelloController extends AbstractRestfulController
 {
+    /**
+     * @var HelloTable
+     */
+    private $table;
+
+    /**
+     * HelloController constructor.
+     * @param HelloTable $table
+     */
+    public function __construct(HelloTable $table)
+    {
+        $this->table = $table;
+    }
+
     public function helloAction()
     {
         $message = $this->params()->fromQuery('message', 'foo');
