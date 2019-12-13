@@ -25,12 +25,12 @@ class HelloControllerTest extends AbstractHttpControllerTestCase
         ));
         parent::setUp();
 
-//        $services = $this->getApplicationServiceLocator();
-//        $config = $services->get('config');
-//        unset($config['db']);
-//        $services->setAllowOverride(true);
-//        $services->setService('config', $config);
-//        $services->setAllowOverride(false);
+        $services = $this->getApplicationServiceLocator();
+        $config = $services->get('config');
+        unset($config['db']);
+        $services->setAllowOverride(true);
+        $services->setService('config', $config);
+        $services->setAllowOverride(false);
     }
 
     public function testIndexActionCanBeAccessed()
