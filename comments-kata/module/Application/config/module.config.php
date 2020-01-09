@@ -7,6 +7,7 @@
 
 namespace Application;
 
+use Application\Controller\BlogController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -44,6 +45,16 @@ return [
                     ],
                 ],
             ],
+            'blog' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/blog/posts/my_post',
+                    'defaults' => [
+                        'controller' => Controller\BlogController::class,
+                        'action'     => 'getBlog',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -53,6 +64,11 @@ return [
             Controller\HelloController::class => function($container) {
                     return new Controller\HelloController(
                         $container->get(Model\HelloTable::class)
+                    );
+                },
+            BlogController::class => function() {
+                    return new BlogController(
+
                     );
                 },
         ],

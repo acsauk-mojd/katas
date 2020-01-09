@@ -3,6 +3,8 @@
 namespace ApplicationTest\Controller;
 
 use Application\Controller\HelloController;
+use phpDocumentor\Reflection\Types\Object_;
+use Prophecy\Prophecy\ObjectProphecy;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -12,6 +14,7 @@ use Zend\ServiceManager\ServiceManager;
 class HelloControllerTest extends AbstractHttpControllerTestCase
 {
     //protected $traceError = false;
+    /** @var HelloTable & ObjectProphecy*/
     protected $helloTable;
 
     protected function configureServiceManager(ServiceManager $services)
@@ -68,10 +71,9 @@ class HelloControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/blog/posts/my_post');
 
-        $this->assertControllerName('blog');
+        $this->assertControllerName('application\controller\blogController');
         $this->assertResponseStatusCode(200);
-        $this->assertQuery('section.blog-post>.comments>.comment');
-
+        $this->assertQuery('section.blog-post > div.comments > div.comment');
     }
 
 }
