@@ -5,6 +5,8 @@ namespace ApplicationTest\Controller;
 use Application\Controller\HelloController;
 use phpDocumentor\Reflection\Types\Object_;
 use Prophecy\Prophecy\ObjectProphecy;
+use Zend\Dom\Document;
+use Zend\Dom\Document\Query;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -73,7 +75,13 @@ class HelloControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerName('application\controller\blogController');
         $this->assertResponseStatusCode(200);
-        $this->assertQuery('section.blog-post > div.comments > div.comment');
+
+        $comments = new Query();
+
+        $result = $comments->execute('section.blog-post > div.comments > div.comment', new Document($this->getResponse()->getContent()), Query::TYPE_CSS);
+
+        $this->assertCount(1, $result);
+
     }
 
 }
