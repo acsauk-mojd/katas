@@ -80,7 +80,7 @@ class HelloControllerTest extends AbstractHttpControllerTestCase
 
         $result = $comments->execute('section.blog-post > div.comments > div.comment', new Document($this->getResponse()->getContent()), Query::TYPE_CSS);
 
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
 
     }
 

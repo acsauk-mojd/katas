@@ -4,5 +4,8 @@
         <testsuite name="Application">
             <directory>./module/Application/test</directory>
         </testsuite>
+        <testsuite name="Repository">
+            <directory>./module/Application/test/Repository</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
