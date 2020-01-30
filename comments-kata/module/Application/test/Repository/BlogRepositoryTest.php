@@ -72,4 +72,22 @@ class BlogRepositoryTest extends AbstractControllerTestCase
         self::assertEquals(2, count($blogPost));
     }
 
+    /** @test */
+    public function getLatest()
+    {
+        $blogArray = [];
+
+        for ($i = 0; $i <= 10; $i++)
+        {
+            array_push($blogArray, new Blog());
+        }
+
+        $this->blogTable->getLatest()->willReturn($blogArray);
+
+        $repository = new BlogRepository($this->blogTable->reveal());
+        $latest = $repository->getLatest();
+
+        self::assertEquals(10, count($latest));
+    }
+
 }

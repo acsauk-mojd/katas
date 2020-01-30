@@ -24,4 +24,9 @@ class BlogRepository
     {
         return $this->blogTable->getAllBlogs();
     }
+
+    public function getLatest() :array
+    {
+        return $this->blogTable->getLatest();
+    }
 }
