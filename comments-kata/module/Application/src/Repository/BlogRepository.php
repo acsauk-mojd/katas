@@ -20,13 +20,15 @@ class BlogRepository
         $this->blogTable = $blogTable;
     }
 
-    public function getAllBlogs() :array
+    public function getAllBlogs(): array
     {
         return $this->blogTable->getAllBlogs();
     }
 
-    public function getLatest() :array
+    public function getLatest(): array
     {
-        return $this->blogTable->getLatest();
+        $allBlogs = $this->getAllBlogs();
+
+        return array_slice($allBlogs, 0, 10);
     }
 }

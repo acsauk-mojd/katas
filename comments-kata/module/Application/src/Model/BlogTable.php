@@ -17,8 +17,4 @@ class BlogTable
 //       return $this->tableGateway->get();
     }
 
-    public function getLatest()
-    {
-        //return the latest 10
-    }
 }

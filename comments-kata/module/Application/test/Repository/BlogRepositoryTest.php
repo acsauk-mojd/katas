@@ -77,12 +77,12 @@ class BlogRepositoryTest extends AbstractControllerTestCase
     {
         $blogArray = [];
 
-        for ($i = 0; $i <= 10; $i++)
+        for ($i = 0; $i <= 20; $i++)
         {
             array_push($blogArray, new Blog());
         }
 
-        $this->blogTable->getLatest()->willReturn($blogArray);
+        $this->blogTable->getAllBlogs()->willReturn($blogArray);
 
         $repository = new BlogRepository($this->blogTable->reveal());
         $latest = $repository->getLatest();
