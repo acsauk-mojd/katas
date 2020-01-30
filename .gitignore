@@ -3,3 +3,4 @@
 .idea/
 .idea/*
 .DS_Store
+comments-kata/phpunit.result.cache
