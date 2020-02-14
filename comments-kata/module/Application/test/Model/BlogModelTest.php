@@ -3,7 +3,9 @@
 namespace ApplicationTest\Model;
 
 use Application\Model\Blog;
+use Application\Model\Comment;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 class BlogModelTest extends TestCase
 {
@@ -20,8 +22,10 @@ class BlogModelTest extends TestCase
     public function setUp(): void
     {
         $this->blog = new Blog();
+        $this->comment = new Comment();
         $this->comments = [new Comment(), new Comment()];
         $this->blog->setComments($this->comments);
+        $this->comment->setTimeStamp(new DateTime('now'));
     }
 
     /** @test */
@@ -38,10 +42,4 @@ class BlogModelTest extends TestCase
         self::assertEquals($this->comments, $this->blog->getComments());
     }
 
-//    /** @test */
-//    public function commentsHasDateStamp()
-//    {
-//       $timeStamp = $this->blog->getComments()->setTimeStamp('01/01/20 18:00:00');
-//        self::assertEquals(new \DateTime(), $timeStamp);
-//    }
 }
