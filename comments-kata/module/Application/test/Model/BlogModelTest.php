@@ -8,10 +8,19 @@ use PHPUnit\Framework\TestCase;
 class BlogModelTest extends TestCase
 {
 
+    /**
+     * @var Blog
+     */
+    private $blog;
+    /**
+     * @var array
+     */
+    private $comments;
+
     public function setUp(): void
     {
         $this->blog = new Blog();
-        $this->comments = ["comment 1"];
+        $this->comments = [new Comment(), new Comment()];
         $this->blog->setComments($this->comments);
     }
 
@@ -19,12 +28,20 @@ class BlogModelTest extends TestCase
     public function getComments()
     {
         self::assertIsArray($this->blog->getComments());
+        self::assertEquals(new Comment(), $this->blog->getComments()[0]);
         self::assertEquals($this->comments, $this->blog->getComments());
     }
 
     /** @test */
     public function setComments()
     {
-        self::assertEquals($this->blog->getComments(), $this->comments);
+        self::assertEquals($this->comments, $this->blog->getComments());
     }
+
+//    /** @test */
+//    public function commentsHasDateStamp()
+//    {
+//       $timeStamp = $this->blog->getComments()->setTimeStamp('01/01/20 18:00:00');
+//        self::assertEquals(new \DateTime(), $timeStamp);
+//    }
 }
