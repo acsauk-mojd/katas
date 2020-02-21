@@ -18,4 +18,13 @@ class Blog
     {
         $this->comments = $comments;
     }
+
+    public function oldestToNewestComments()
+    {
+        $commentList = $this->getComments();
+
+        sort($commentList);
+
+        return $commentList;
+    }
 }
