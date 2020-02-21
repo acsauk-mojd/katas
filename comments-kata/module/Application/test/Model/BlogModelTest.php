@@ -26,7 +26,6 @@ class BlogModelTest extends TestCase
     public function setUp(): void
     {
         $this->blog = new Blog();
-        $this->comment = new Comment();
         $this->comments = [new Comment(), new Comment()];
         $this->comments[0]->setTimeStamp(new DateTime('02-02-02'));
         $this->comments[1]->setTimeStamp(new DateTime('01-01-01'));
@@ -37,7 +36,6 @@ class BlogModelTest extends TestCase
     public function getComments()
     {
         self::assertIsArray($this->blog->getComments());
-        self::assertEquals(new Comment(), $this->blog->getComments()[0]);
         self::assertEquals($this->comments, $this->blog->getComments());
     }
 
@@ -51,7 +49,7 @@ class BlogModelTest extends TestCase
     public function oldestToNewestComments()
     {
         $commentList = $this->blog->oldestToNewestComments();
-        var_dump($commentList);
+
         for ($i = 0; $i <= sizeof($commentList)-2; $i++) {
             self::assertTrue($commentList[$i]->getTimeStamp() < $commentList[$i+1]->getTimeStamp());
             continue;
