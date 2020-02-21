@@ -6,6 +6,7 @@ use Application\Model\Blog;
 use Application\Model\Comment;
 use PHPUnit\Framework\TestCase;
 use DateTime;
+use SebastianBergmann\CodeCoverage\TestFixture\C;
 
 class BlogModelTest extends TestCase
 {
@@ -64,6 +65,22 @@ class BlogModelTest extends TestCase
         $this->blog->setComments($commentsArray);
 
         self::assertEquals([], $this->blog->oldestToNewestComments());
+    }
+
+    /** @test */
+    public function getUptoTen()
+    {
+        $commentsArray = [];
+
+        for ($i = 0; $i <= 9; $i++)
+        {
+            array_push($commentsArray, new Comment());
+        }
+
+        $this->blog->setComments($commentsArray);
+
+        self::assertEquals($commentsArray, $this->blog->oldestToNewestComments());
+
     }
 
 }
