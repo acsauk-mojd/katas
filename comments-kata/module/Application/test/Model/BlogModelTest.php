@@ -56,4 +56,14 @@ class BlogModelTest extends TestCase
         }
     }
 
+    /** @test */
+    public function noComments()
+    {
+        $commentsArray = [];
+
+        $this->blog->setComments($commentsArray);
+
+        self::assertEquals([], $this->blog->oldestToNewestComments());
+    }
+
 }
