@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32e709c84345ef909da6eb1c26cd5c90",
+    "content-hash": "4192af079e8c75c52bb243f94bdb8f57",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -37,6 +37,74 @@
             "homepage": "https://github.com/container-interop/container-interop",
             "abandoned": "psr/container",
             "time": "2017-02-14T19:40:03+00:00"
+        },
+        {
+            "name": "kokspflanze/zfc-twig",
+            "version": "1.4.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kokspflanze/ZfcTwig.git",
+                "reference": "bc0de30df8817432d1395e8d0552e3c635b010cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kokspflanze/ZfcTwig/zipball/bc0de30df8817432d1395e8d0552e3c635b010cd",
+                "reference": "bc0de30df8817432d1395e8d0552e3c635b010cd",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5 || ^7.0",
+                "twig/twig": "^1.27"
+            },
+            "replace": {
+                "zf-commons/zfc-twig": "self.version"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8 || ^5.6.2",
+                "zendframework/zend-modulemanager": "^2.7",
+                "zendframework/zend-mvc": "^2.7 || ^3.0",
+                "zendframework/zend-navigation": "^2.7",
+                "zendframework/zend-servicemanager": "^2.7 || ^3.0",
+                "zendframework/zend-view": "^2.7"
+            },
+            "suggest": {
+                "zendframework/zend-mvc-plugin-flashmessenger": "for zf3 support"
+            },
+            "type": "library",
+            "extra": {
+                "zf": {
+                    "module": "ZfcTwig"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZfcTwig\\": "src/ZfcTwig"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Spraggs",
+                    "email": "theman@spiffyjr.me",
+                    "homepage": "http://www.spiffyjr.me/"
+                },
+                {
+                    "name": "Cosmin Harangus",
+                    "email": "cosmin@zendexperts.com",
+                    "homepage": "http://www.zendexperts.com/"
+                }
+            ],
+            "description": "Zend Framework Module that provides a Twig rendering strategy and extensions to render actions or trigger events from your templates",
+            "homepage": "https://github.com/kokspflanze/ZfcTwig/",
+            "keywords": [
+                "module",
+                "twig",
+                "zf"
+            ],
+            "time": "2019-02-10T23:44:08+00:00"
         },
         {
             "name": "psr/container",
@@ -88,6 +156,128 @@
             "time": "2017-02-14T16:28:37+00:00"
         },
         {
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
+                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "time": "2019-11-27T13:56:44+00:00"
+        },
+        {
+            "name": "twig/twig",
+            "version": "v1.42.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/Twig.git",
+                "reference": "87b2ea9d8f6fd014d0621ca089bb1b3769ea3f8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/87b2ea9d8f6fd014d0621ca089bb1b3769ea3f8e",
+                "reference": "87b2ea9d8f6fd014d0621ca089bb1b3769ea3f8e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0",
+                "symfony/polyfill-ctype": "^1.8"
+            },
+            "require-dev": {
+                "psr/container": "^1.0",
+                "symfony/phpunit-bridge": "^4.4|^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.42-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Twig_": "lib/"
+                },
+                "psr-4": {
+                    "Twig\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Twig Team",
+                    "role": "Contributors"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com",
+                    "role": "Project Founder"
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "templating"
+            ],
+            "time": "2020-02-11T05:59:23+00:00"
+        },
+        {
             "name": "zendframework/zend-component-installer",
             "version": "2.1.2",
             "source": {
@@ -137,6 +327,7 @@
                 "plugin",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-component-installer",
             "time": "2019-09-04T19:10:43+00:00"
         },
         {
@@ -197,6 +388,7 @@
                 "config",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-config",
             "time": "2019-06-08T18:58:54+00:00"
         },
         {
@@ -255,6 +447,7 @@
                 "db",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-db",
             "time": "2019-02-25T11:37:45+00:00"
         },
         {
@@ -300,6 +493,7 @@
                 "escaper",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-escaper",
             "time": "2019-09-05T20:03:20+00:00"
         },
         {
@@ -354,6 +548,7 @@
                 "events",
                 "zf2"
             ],
+            "abandoned": "laminas/laminas-eventmanager",
             "time": "2018-04-25T15:33:34+00:00"
         },
         {
@@ -409,6 +604,7 @@
                 "zend",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-http",
             "time": "2019-02-19T18:58:14+00:00"
         },
         {
@@ -459,6 +655,7 @@
                 "json",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-json",
             "time": "2019-10-09T13:56:13+00:00"
         },
         {
@@ -504,6 +701,7 @@
                 "loader",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-loader",
             "time": "2019-09-04T19:38:14+00:00"
         },
         {
@@ -563,6 +761,7 @@
                 "modulemanager",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-modulemanager",
             "time": "2019-10-28T13:29:38+00:00"
         },
         {
@@ -635,6 +834,7 @@
                 "mvc",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-mvc",
             "time": "2017-11-24T06:32:07+00:00"
         },
         {
@@ -697,6 +897,7 @@
                 "zend",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-router",
             "time": "2019-02-26T20:24:12+00:00"
         },
         {
@@ -765,6 +966,7 @@
                 "servicemanager",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-servicemanager",
             "time": "2018-12-22T06:05:09+00:00"
         },
         {
@@ -811,6 +1013,7 @@
                 "stdlib",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-stdlib",
             "time": "2018-08-28T21:34:05+00:00"
         },
         {
@@ -858,6 +1061,7 @@
                 "uri",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-uri",
             "time": "2019-10-07T13:35:33+00:00"
         },
         {
@@ -931,6 +1135,7 @@
                 "validator",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-validator",
             "time": "2019-10-29T08:33:25+00:00"
         },
         {
@@ -1018,6 +1223,7 @@
                 "view",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-view",
             "time": "2019-10-11T21:10:04+00:00"
         },
         {
@@ -1067,6 +1273,7 @@
                 "framework",
                 "zf"
             ],
+            "abandoned": "laminas/laminas-development-mode",
             "time": "2018-05-07T15:44:42+00:00"
         }
     ],
@@ -2439,64 +2646,6 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2016-10-03T07:35:21+00:00"
-        },
-        {
-            "name": "symfony/polyfill-ctype",
-            "version": "v1.13.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
-                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "suggest": {
-                "ext-ctype": "For best performance"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.13-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Ctype\\": ""
-                },
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill for ctype functions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "ctype",
-                "polyfill",
-                "portable"
-            ],
-            "time": "2019-11-27T13:56:44+00:00"
         },
         {
             "name": "theseer/tokenizer",

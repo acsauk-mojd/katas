@@ -14,7 +14,8 @@
         "zendframework/zend-component-installer": "^1.0 || ^2.1",
         "zendframework/zend-mvc": "^3.1.1",
         "zfcampus/zf-development-mode": "^3.2",
-        "zendframework/zend-db": "^2.10"
+        "zendframework/zend-db": "^2.10",
+        "kokspflanze/zfc-twig": "^1.4.4"
     },
     "autoload": {
         "psr-4": {
