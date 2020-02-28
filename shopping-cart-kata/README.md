@@ -16,3 +16,17 @@ Shopping cart is a simple coding challenge, often described as a code kata. The 
  |B|30|2 for 45|
  |C|20||
  |D|15||
+ 
+ 
+ Tips and tricks for setting up
+ 
+ - change the composer.json to map your autoloader i.e.
+ 
+ "autoload": {
+         "classmap": [
+             "Folder where your class is to be tested"
+             ]
+     }
+     
+  - To run the test `./vendor/bin/phpunit tests`
+  - If an error of Error: Class '<namespace>' not found then could need to run `composer dump-autoload`

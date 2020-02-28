@@ -1,4 +1,9 @@
 {
+    "autoload": {
+        "classmap": [
+            "Checkout/"
+            ]
+    },
     "require": {
         "phpunit/phpunit": "^9"
     }
