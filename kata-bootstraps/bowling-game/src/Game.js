@@ -1,7 +1,9 @@
 export default class Game {
     
+    total = 0
+
     score() {
-        return 0;
+        return this.total;
     };
 
 };

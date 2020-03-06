@@ -1,7 +1,7 @@
 import Game from '../src/Game';
 
 describe('Game', () => {
-  describe('Score', () => {
+  describe('score', () => {
     test('returns 0 at start of game', () => {
       let game = new Game();
       expect(game.score()).toBe(0);
@@ -11,6 +11,13 @@ describe('Game', () => {
       let game = new Game();
       game.total = 1;
       expect(game.score()).toBe(1);
+    })
+  })
+
+  describe('roll', () => {
+    test('takes an int', () => {
+        let game = new Game()
+        expect(game.roll(5)).not.toThrow(new Error())
     })
   })
 });
