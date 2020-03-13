@@ -16,8 +16,13 @@ class Basket
 
     public function setItem($item)
     {
-        $this->item = $item;
+        $this->item[] = $item;
 
         return $this;
+    }
+
+    public function getItems(): array
+    {
+        return $this->item;
     }
 }
