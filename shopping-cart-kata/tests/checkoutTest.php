@@ -11,4 +11,11 @@ class checkoutTest extends TestCase
     public function getShoppingBasket() {
         self::assertInstanceOf(Basket::class, new Basket());
     }
+
+    /** @test */
+    public function addOneItemBasket() {
+        $basket = new Basket();
+        $basket->setItem('Apples');
+        self::assertEquals('Apples', $basket->getItem());
+    }
 }
