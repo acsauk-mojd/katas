@@ -18,4 +18,12 @@ class checkoutTest extends TestCase
         $basket->setItem('Apples');
         self::assertEquals('Apples', $basket->getItem());
     }
+
+    /** @test */
+    public function addTwoItemsBasket() {
+        $basket = new Basket();
+        $basket->setItem('Apples');
+        $basket->setItem('Grapes');
+        self::assertEquals(['Apples','Grapes'], $basket->getItems());
+    }
 }
