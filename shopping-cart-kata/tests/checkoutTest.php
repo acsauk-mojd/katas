@@ -41,6 +41,7 @@ class checkoutTest extends TestCase
 
         self::assertCount(2, $basket->getItems());
         self::assertCount('3.20', $basket->getTotal());
+        
     }
 
 }
