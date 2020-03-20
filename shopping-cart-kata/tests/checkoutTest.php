@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Checkout\Basket;
+use Checkout\Item;
 
 class checkoutTest extends TestCase
 {
@@ -15,15 +16,27 @@ class checkoutTest extends TestCase
     /** @test */
     public function addOneItemBasket() {
         $basket = new Basket();
-        $basket->setItem('Apples');
-        self::assertEquals('Apples', $basket->getItem());
+
+        $items = 'Grapes';
+        $item = new Item();
+        $item->setName($items);
+        $basket->addItem($item);
+
+        self::assertEquals($items, $item->getName());
     }
 
     /** @test */
-    public function addTwoItemsBasket() {
+    public function twoItemsBasket() {
         $basket = new Basket();
-        $basket->setItem('Apples');
-        $basket->setItem('Grapes');
-        self::assertEquals(['Apples','Grapes'], $basket->getItems());
+
+        $items = ['Apples', 'Grapes'];
+
+        Foreach ($items as $itemName) {
+            $item = new Item();
+            $item->setName($itemName);
+            $basket->addItem($item);
+        }
+
+        self::assertCount(2, $basket->getItems());
     }
 }

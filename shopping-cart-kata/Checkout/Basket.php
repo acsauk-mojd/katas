@@ -7,22 +7,17 @@ namespace Checkout;
 class Basket
 {
 
-    private $item;
+    private $items;
 
-    public function getItem()
+    public function addItem($items)
     {
-        return $this->item;
-    }
-
-    public function setItem($item)
-    {
-        $this->item[] = $item;
+        $this->items[] = $items;
 
         return $this;
     }
 
-    public function getItems(): array
+    public function getItems()
     {
-        return $this->item;
+        return $this->items;
     }
 }
