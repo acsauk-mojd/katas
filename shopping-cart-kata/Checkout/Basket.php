@@ -26,5 +26,4 @@ class Basket
     {
         return $this->total;
     }
-
 }

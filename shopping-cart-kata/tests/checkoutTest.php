@@ -8,10 +8,39 @@ use Checkout\Item;
 
 class checkoutTest extends TestCase
 {
+    private function setUpItems()
+    {
+        $basket = new Basket();
+        $items = [
+            'Apples' => [
+                'price' => '1.20',
+                'offer' => null
+            ],
+            'Grapes' => [
+                'price' => '2.0',
+                'offer' => null
+            ],
+            'Bananas' => [
+                'price' => '1.0',
+                'offer' => null
+        ]];
+
+        Foreach ($items as $itemName => $itemProperties) {
+            $item = new Item();
+            $item->setName($itemName);
+            $item->setPrice($itemProperties['price']);
+
+            $basket->addItem($item);
+        }
+
+        return $basket;
+    }
+
     /** @test */
     public function getShoppingBasket() {
         self::assertInstanceOf(Basket::class, new Basket());
     }
+
     /** @test */
     public function addOneItemBasket() {
         $basket = new Basket();
@@ -23,20 +52,22 @@ class checkoutTest extends TestCase
 
         self::assertEquals($items, $item->getName());
     }
+
     /** @test */
-    public function twoItemsBasket() {
+    public function threeItemsBasket()
+    {
+        $basket = $this->setUpItems();
 
-        $basket = new Basket();
-        $items = ['Apples' => '1.20', 'Grapes' => '2.0', 'Bananas' => '1.0'];
 
-        Foreach ($items as $itemName => $itemPrice) {
-            $item = new Item();
-            $item->setName($itemName);
-            $item->setPrice($itemPrice);
-            $basket->addItem($item);
-        }
+        self::assertCount(3, $basket->getItems());
+        self::assertEquals('4.20', $basket->getTotal());
+    }
 
-        self::assertCount(2, $basket->getItems());
-        self::assertEquals('3.20', $basket->getTotal());
+    public function checkForSpecialOffer()
+    {
+        $basket = $this->setUpItems();
+        $offerExists = $basket->offersExist();
+
+        self::assertEquals(' ', 1);
     }
 }
