@@ -39,4 +39,13 @@ class checkoutTest extends TestCase
 
         self::assertCount(2, $basket->getItems());
     }
+
+    /** @test */
+    public function getItemPrice()
+    {
+        $item = new Item();
+        $item->setPrice('1.20');
+
+        self::assertEquals('1.20', $item->getPrice());
+    }
 }
