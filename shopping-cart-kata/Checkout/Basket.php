@@ -6,12 +6,13 @@ namespace Checkout;
 
 class Basket
 {
-
     private $items;
+    private $total = 0;
 
-    public function addItem($items)
+    public function addItem($item)
     {
-        $this->items[] = $items;
+        $this->items[] = $item;
+        $this->total += $item->getPrice();
 
         return $this;
     }
@@ -20,4 +21,10 @@ class Basket
     {
         return $this->items;
     }
+
+    public function getTotal()
+    {
+        return $this->total;
+    }
+
 }

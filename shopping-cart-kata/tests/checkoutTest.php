@@ -12,7 +12,6 @@ class checkoutTest extends TestCase
     public function getShoppingBasket() {
         self::assertInstanceOf(Basket::class, new Basket());
     }
-
     /** @test */
     public function addOneItemBasket() {
         $basket = new Basket();
@@ -24,28 +23,20 @@ class checkoutTest extends TestCase
 
         self::assertEquals($items, $item->getName());
     }
-
     /** @test */
     public function twoItemsBasket() {
+
         $basket = new Basket();
+        $items = ['Apples' => '1.20', 'Grapes' => '2.0', 'Bananas' => '1.0'];
 
-        $items = ['Apples', 'Grapes'];
-
-        Foreach ($items as $itemName) {
+        Foreach ($items as $itemName => $itemPrice) {
             $item = new Item();
             $item->setName($itemName);
+            $item->setPrice($itemPrice);
             $basket->addItem($item);
         }
 
         self::assertCount(2, $basket->getItems());
-    }
-
-    /** @test */
-    public function getItemPrice()
-    {
-        $item = new Item();
-        $item->setPrice('1.20');
-
-        self::assertEquals('1.20', $item->getPrice());
+        self::assertEquals('3.20', $basket->getTotal());
     }
 }
