@@ -29,23 +29,18 @@ class checkoutTest extends TestCase
     public function twoItemsBasket() {
         $basket = new Basket();
 
-        $items = ['Apples', 'Grapes'];
+        $items = ['Apples' => '1.20', 'Grapes' => '2.0'];
 
-        Foreach ($items as $itemName) {
+        Foreach ($items as $itemName => $itemPrice) {
             $item = new Item();
             $item->setName($itemName);
+            $item->setPrice($itemPrice);
+
             $basket->addItem($item);
         }
 
         self::assertCount(2, $basket->getItems());
+        self::assertCount('3.20', $basket->getTotal());
     }
 
-    /** @test */
-    public function getItemPrice()
-    {
-        $item = new Item();
-        $item->setPrice('1.20');
-
-        self::assertEquals('1.20', $item->getPrice());
-    }
 }
