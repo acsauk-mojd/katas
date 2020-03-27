@@ -8,6 +8,7 @@ class Item {
 
     private $name;
     private $price;
+    private $offerExists;
 
     public function setName($name)
     {
@@ -28,5 +29,18 @@ class Item {
     public function getPrice()
     {
         return $this->price;
+    }
+
+    public function setOfferExists($offer)
+    {
+        $this->offerExists = $offer;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOfferExists()
+    {
+        return $this->offerExists;
     }
 }

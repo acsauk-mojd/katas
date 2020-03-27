@@ -8,11 +8,16 @@ class Basket
 {
     private $items;
     private $total = 0;
+    private $offers = false;
 
     public function addItem($item)
     {
         $this->items[] = $item;
         $this->total += $item->getPrice();
+
+        if ($item->getOfferExists()) {
+            $this->offers = $item->getOfferExists();
+        }
 
         return $this;
     }
@@ -25,5 +30,10 @@ class Basket
     public function getTotal()
     {
         return $this->total;
+    }
+
+    public function offersExisting()
+    {
+        return $this->offers;
     }
 }

@@ -29,6 +29,7 @@ class checkoutTest extends TestCase
             $item = new Item();
             $item->setName($itemName);
             $item->setPrice($itemProperties['price']);
+            $item->setOfferExists($itemProperties['offer']);
 
             $basket->addItem($item);
         }
@@ -69,5 +70,11 @@ class checkoutTest extends TestCase
         $offerExists = $basket->offersExisting();
 
         self::assertTrue($offerExists);
+    }
+
+    /** @test */
+    public function getOffersCLass()
+    {
+        self::assertInstanceOf(Offer::class, new Offer());
     }
 }
