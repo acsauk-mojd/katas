@@ -9,6 +9,7 @@ use Checkout\Offer;
 
 class checkoutTest extends TestCase
 {
+    //TODO: Not checking for duplicate items
     private function setUpItems()
     {
         $basket = new Basket();
@@ -82,14 +83,22 @@ class checkoutTest extends TestCase
     /** @test */
     public function getOfferOnItem()
     {
-        $basket = new Basket();
-
         $items = 'Pears';
         $item = new Item();
         $item->setName($items);
-        $basket->addItem($item);
         $item->setOffer('2 for 0.45');
 
         self::assertEquals('2 for 0.45', $item->getOffer());
+    }
+
+    /** @test */
+    public function setOfferRule()
+    {
+        $offer = new Offer();
+
+        $offer->setName('2 for 0.45');
+        $offer->setAffectedItem('Pear');
+
+        self::assertEquals('Pear', $offer->getAffectedItem());
     }
 }
