@@ -14,15 +14,15 @@ class checkoutTest extends TestCase
         $items = [
             'Apples' => [
                 'price' => '1.20',
-                'offer' => null
+                'offer' => true
             ],
             'Grapes' => [
                 'price' => '2.0',
-                'offer' => null
+                'offer' => false
             ],
             'Bananas' => [
                 'price' => '1.0',
-                'offer' => null
+                'offer' => false
         ]];
 
         Foreach ($items as $itemName => $itemProperties) {
@@ -58,16 +58,16 @@ class checkoutTest extends TestCase
     {
         $basket = $this->setUpItems();
 
-
         self::assertCount(3, $basket->getItems());
         self::assertEquals('4.20', $basket->getTotal());
     }
 
+    /** @test */
     public function checkForSpecialOffer()
     {
         $basket = $this->setUpItems();
-        $offerExists = $basket->offersExist();
+        $offerExists = $basket->offersExisting();
 
-        self::assertEquals(' ', 1);
+        self::assertTrue($offerExists);
     }
 }
