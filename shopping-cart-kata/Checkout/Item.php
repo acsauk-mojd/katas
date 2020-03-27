@@ -12,6 +12,7 @@ class Item {
     private $price;
     private $offerExists;
     private $offer;
+    private $quantity;
 
     public function setName($name)
     {
@@ -65,5 +66,21 @@ class Item {
     {
         $this->offer = $offer;
         $this->setOfferExists(true);
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param int $quantity
+     */
+    public function setQuantity(int $quantity)
+    {
+        $this->quantity = $quantity;
     }
 }

@@ -15,18 +15,21 @@ class checkoutTest extends TestCase
         $basket = new Basket();
         $items = [
             'Apples' => [
-                'price' => '1.20',
-                'offer' => true,
+                'price'      => '1.20',
+                'offer'      => true,
+                'quantity'   => 2,
                 'offerRules' => '3 for 1.20'
             ],
             'Grapes' => [
-                'price' => '2.0',
-                'offer' => false,
+                'price'      => '2.0',
+                'offer'      => false,
+                'quantity'   => 1,
                 'offerRules' => '4 for 3.00'
             ],
             'Bananas' => [
-                'price' => '1.0',
-                'offer' => false,
+                'price'      => '1.0',
+                'offer'      => false,
+                'quantity'   => 1,
                 'offerRules' => '2 for 1.00'
         ]];
 
@@ -34,6 +37,7 @@ class checkoutTest extends TestCase
             $item = new Item();
             $item->setName($itemName);
             $item->setPrice($itemProperties['price']);
+            $item->setQuantity($itemProperties['quantity']);
 
             $offer = new Offer();
             $offer->setName($itemProperties['offerRules']);
@@ -41,8 +45,6 @@ class checkoutTest extends TestCase
 
             $basket->addItem($item);
         }
-
-        var_dump($basket->getItems());
 
         return $basket;
     }
@@ -122,13 +124,28 @@ class checkoutTest extends TestCase
         $item = new Item();
         $item->setName('Peaches');
         $item->setPrice(1.10);
-        $item->setQuantity(1);
+        $item->setQuantity(2);
 
+        self::assertEquals(2, $item->getQuantity());
+    }
+
+    /** @test */
+    public function checkOfferApplies()
+    {
         $item = new Item();
         $item->setName('Peaches');
         $item->setPrice(1.10);
         $item->setQuantity(2);
 
-        self::assertEquals(2, $item->getQuantity());
+        $offer = new Offer();
+        $offer->setName('2 for 2.00');
+        $offer->getAffectedItem('Peaches');
+        $item->setOffer($offer);
+
+        $basket = new Basket();
+        $basket->addItem($item);
+
+        self::assertTrue($basket->offersExisting());
+        self::assertEquals(2, $basket->getTotal());
     }
 }
