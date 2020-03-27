@@ -16,25 +16,33 @@ class checkoutTest extends TestCase
         $items = [
             'Apples' => [
                 'price' => '1.20',
-                'offer' => true
+                'offer' => true,
+                'offerRules' => '3 for 1.20'
             ],
             'Grapes' => [
                 'price' => '2.0',
-                'offer' => false
+                'offer' => false,
+                'offerRules' => '4 for 3.00'
             ],
             'Bananas' => [
                 'price' => '1.0',
-                'offer' => false
+                'offer' => false,
+                'offerRules' => '2 for 1.00'
         ]];
 
         Foreach ($items as $itemName => $itemProperties) {
             $item = new Item();
             $item->setName($itemName);
             $item->setPrice($itemProperties['price']);
-            $item->setOfferExists($itemProperties['offer']);
+
+            $offer = new Offer();
+            $offer->setName($itemProperties['offerRules']);
+            $item->setOffer($offer);
 
             $basket->addItem($item);
         }
+
+        var_dump($basket->getItems());
 
         return $basket;
     }
@@ -47,10 +55,13 @@ class checkoutTest extends TestCase
     /** @test */
     public function addOneItemBasket() {
         $basket = new Basket();
+        $offer = new Offer();
 
         $items = 'Grapes';
         $item = new Item();
         $item->setName($items);
+        $offer->setName('2 for 3.50');
+        $item->setOffer($offer);
         $basket->addItem($item);
 
         self::assertEquals($items, $item->getName());
@@ -86,9 +97,11 @@ class checkoutTest extends TestCase
         $items = 'Pears';
         $item = new Item();
         $item->setName($items);
-        $item->setOffer('2 for 0.45');
 
-        self::assertEquals('2 for 0.45', $item->getOffer());
+        $offer = new Offer();
+        $item->setOffer($offer);
+
+        self::assertInstanceOf(Offer::class, $item->getOffer());
     }
 
     /** @test */
@@ -100,5 +113,22 @@ class checkoutTest extends TestCase
         $offer->setAffectedItem('Pear');
 
         self::assertEquals('Pear', $offer->getAffectedItem());
+        self::assertEquals('2 for 0.45', $offer->getName());
+    }
+
+    /** @test */
+    public function checkQuantityOfItem()
+    {
+        $item = new Item();
+        $item->setName('Peaches');
+        $item->setPrice(1.10);
+        $item->setQuantity(1);
+
+        $item = new Item();
+        $item->setName('Peaches');
+        $item->setPrice(1.10);
+        $item->setQuantity(2);
+
+        self::assertEquals(2, $item->getQuantity());
     }
 }

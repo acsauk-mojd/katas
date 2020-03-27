@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Checkout;
 
+use phpDocumentor\Reflection\Types\Boolean;
+
 class Item {
 
     private $name;
@@ -32,32 +34,36 @@ class Item {
         return $this->price;
     }
 
-    public function setOfferExists($offer)
+    /**
+     * @param bool $offer
+     */
+    private function setOfferExists(bool $offer)
     {
         $this->offerExists = $offer;
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getOfferExists()
+    public function getOfferExists() : bool
     {
         return $this->offerExists;
     }
 
     /**
-     * @return mixed
+     * @return Offer
      */
-    public function getOffer()
+    public function getOffer() : Offer
     {
         return $this->offer;
     }
 
     /**
-     * @param mixed $offer
+     * @param Offer $offer
      */
-    public function setOffer($offer)
+    public function setOffer(Offer $offer)
     {
         $this->offer = $offer;
+        $this->setOfferExists(true);
     }
 }
