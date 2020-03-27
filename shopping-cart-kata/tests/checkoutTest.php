@@ -5,6 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Checkout\Basket;
 use Checkout\Item;
+use Checkout\Offer;
 
 class checkoutTest extends TestCase
 {
@@ -73,8 +74,22 @@ class checkoutTest extends TestCase
     }
 
     /** @test */
-    public function getOffersCLass()
+    public function getOfferCLass()
     {
         self::assertInstanceOf(Offer::class, new Offer());
+    }
+
+    /** @test */
+    public function getOfferOnItem()
+    {
+        $basket = new Basket();
+
+        $items = 'Pears';
+        $item = new Item();
+        $item->setName($items);
+        $basket->addItem($item);
+        $item->setOffer('2 for 0.45');
+
+        self::assertEquals('2 for 0.45', $item->getOffer());
     }
 }
