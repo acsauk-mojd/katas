@@ -146,6 +146,18 @@ class checkoutTest extends TestCase
         $basket->addItem($item);
 
         self::assertTrue($basket->offersExisting());
-        self::assertEquals(2, $basket->getTotal());
+//        self::assertEquals(2, $offer->applyOffer($offer->getName(), $item->getQuantity()));
+//        self::assertEquals(2, $basket->getTotal());
+    }
+
+    /** @test */
+    public function checkOfferCanGetPrice()
+    {
+        $offer = new Offer();
+        $offer->setName('2 for 2.00');
+        $offer->getAffectedItem('Peaches');
+        $offer->setPrice(1.10);
+
+        self::assertEquals(1.10, $offer->getPrice());
     }
 }

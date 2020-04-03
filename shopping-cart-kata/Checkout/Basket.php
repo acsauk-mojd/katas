@@ -17,6 +17,7 @@ class Basket
 
         if ($item->getOfferExists()) {
             $this->offers = $item->getOfferExists();
+
         }
 
         return $this;
