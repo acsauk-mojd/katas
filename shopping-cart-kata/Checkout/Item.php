@@ -38,7 +38,7 @@ class Item {
     /**
      * @param bool $offer
      */
-    private function setOfferExists(bool $offer)
+    public function setOfferExists(bool $offer)
     {
         $this->offerExists = $offer;
     }

@@ -130,7 +130,7 @@ class checkoutTest extends TestCase
     }
 
     /** @test */
-    public function checkOfferExistsOnBasket()
+    public function checkOfferExistsOnBasketAndIsApplied()
     {
         $item = new Item();
         $item->setName('Peaches');
@@ -142,10 +142,20 @@ class checkoutTest extends TestCase
         $offer->getAffectedItem('Peaches');
         $item->setOffer($offer);
 
+        $itemOrange = new Item();
+        $itemOrange->setName('Oranges');
+        $itemOrange->setPrice(0.9);
+        $itemOrange->setQuantity(3);
+        $itemOrange->setOfferExists(false);
+
         $basket = new Basket();
         $basket->addItem($item);
+        $basket->addItem($itemOrange);
 
         self::assertTrue($basket->offersExisting());
+        self::assertEquals(2, $basket->applyOffer($item->getOffer()->getOfferQuantity(), $item->getQuantity()));
+
+
     }
 
     /** @test */
@@ -168,6 +178,8 @@ class checkoutTest extends TestCase
         $offer->setItemPrice(1.10);
         $offer->setOfferQuantity(2);
 
-        self:assertEquals(2, $offer->getOfferQuantity());
+        self::assertEquals(2, $offer->getOfferQuantity());
     }
+
+
 }
