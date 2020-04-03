@@ -140,6 +140,7 @@ class checkoutTest extends TestCase
         $offer = new Offer();
         $offer->setName('2 for 2.00');
         $offer->getAffectedItem('Peaches');
+        $offer->setOfferQuantity(2);
         $itemPeaches->setOffer($offer);
 
         $itemOrange = new Item();
@@ -156,8 +157,6 @@ class checkoutTest extends TestCase
         self::assertEquals(2, $basket->applyOffer($itemPeaches->getOffer()->getOfferQuantity(), $itemPeaches->getQuantity()));
 
         self::assertEquals(1, $basket->totalAppliedOffers());
-
-
     }
 
     /** @test */

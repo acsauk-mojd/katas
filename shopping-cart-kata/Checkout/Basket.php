@@ -43,5 +43,8 @@ class Basket
         if ($offerQuantity === $itemQuantity) {
             return $offerQuantity;
         }
+
+        return false;
     }
+
 }
