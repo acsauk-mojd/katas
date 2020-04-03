@@ -37,4 +37,11 @@ class Basket
     {
         return $this->offers;
     }
+
+    public function applyOffer($offerQuantity, $itemQuantity)
+    {
+        if ($offerQuantity === $itemQuantity) {
+            return $offerQuantity;
+        }
+    }
 }
