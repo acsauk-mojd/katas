@@ -18,6 +18,7 @@ class Basket
         if ($item->getOfferExists()) {
             $this->offers = $item->getOfferExists();
 
+            $this->applyOffer($item, $this->getQuantity($item));
         }
 
         return $this;
@@ -38,13 +39,28 @@ class Basket
         return $this->offers;
     }
 
-    public function applyOffer($offerQuantity, $itemQuantity)
+    public function applyOffer(Item $item, int $quantity)
     {
-        if ($offerQuantity === $itemQuantity) {
-            return $offerQuantity;
+        if ($item->getOffer()->getOfferQuantity() === $quantity) {
+
+            // subtract the cost of the item's original price and quantity for the offer
+            $this->total -= ($item->getPrice() * $quantity);
+
+            // add the cost for the offer
+            $this->total += $item->getOffer()->getOfferPrice();
+            return $this->total;
         }
 
         return false;
+    }
+
+    public function getQuantity(Item $item)
+    {
+        $objectToStr = array_map(function ($object) { return $object->getName(); }, $this->items);
+
+        $itemAmounts = array_count_values($objectToStr);
+
+        return $itemAmounts[$item->getName()];
     }
 
 }

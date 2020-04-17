@@ -17,19 +17,16 @@ class checkoutTest extends TestCase
             'Apples' => [
                 'price'      => '1.20',
                 'offer'      => true,
-                'quantity'   => 2,
                 'offerRules' => '3 for 1.20'
             ],
             'Grapes' => [
                 'price'      => '2.0',
                 'offer'      => false,
-                'quantity'   => 1,
                 'offerRules' => '4 for 3.00'
             ],
             'Bananas' => [
                 'price'      => '1.0',
                 'offer'      => false,
-                'quantity'   => 1,
                 'offerRules' => '2 for 1.00'
         ]];
 
@@ -37,7 +34,6 @@ class checkoutTest extends TestCase
             $item = new Item();
             $item->setName($itemName);
             $item->setPrice($itemProperties['price']);
-            $item->setQuantity($itemProperties['quantity']);
 
             $offer = new Offer();
             $offer->setName($itemProperties['offerRules']);
@@ -119,44 +115,34 @@ class checkoutTest extends TestCase
     }
 
     /** @test */
-    public function checkQuantityOfItem()
-    {
-        $item = new Item();
-        $item->setName('Peaches');
-        $item->setPrice(1.10);
-        $item->setQuantity(2);
-
-        self::assertEquals(2, $item->getQuantity());
-    }
-
-    /** @test */
     public function checkOfferExistsOnBasketAndIsApplied()
     {
         $itemPeaches = new Item();
         $itemPeaches->setName('Peaches');
         $itemPeaches->setPrice(1.10);
-        $itemPeaches->setQuantity(2);
 
         $offer = new Offer();
-        $offer->setName('2 for 2.00');
+        $offer->setName('2 for 1.50');
         $offer->getAffectedItem('Peaches');
         $offer->setOfferQuantity(2);
+        $offer->setOfferPrice(1.5);
         $itemPeaches->setOffer($offer);
 
         $itemOrange = new Item();
         $itemOrange->setName('Oranges');
-        $itemOrange->setPrice(0.9);
-        $itemOrange->setQuantity(3);
+        $itemOrange->setPrice(1.0);
         $itemOrange->setOfferExists(false);
 
         $basket = new Basket();
+        // 3.20
+        $basket->addItem($itemPeaches);
         $basket->addItem($itemPeaches);
         $basket->addItem($itemOrange);
 
-        self::assertTrue($basket->offersExisting());
-        self::assertEquals(2, $basket->applyOffer($itemPeaches->getOffer()->getOfferQuantity(), $itemPeaches->getQuantity()));
+        // with offer = 2.50
 
-        self::assertEquals(1, $basket->totalAppliedOffers());
+        self::assertTrue($basket->offersExisting());
+        self::assertEquals(2.5, $basket->getTotal());
     }
 
     /** @test */
@@ -165,19 +151,17 @@ class checkoutTest extends TestCase
         $item = new Item();
         $item->setName('Peaches');
         $item->setPrice(1.10);
-        $item->setQuantity(1);
 
         $offer = new Offer();
         $offer->setName('2 for 2.00');
         $offer->getAffectedItem('Peaches');
         $item->setOffer($offer);
 
-
         $basket = new Basket();
         $basket->addItem($item);
 
         self::assertTrue($basket->offersExisting());
-        self::assertFalse($basket->applyOffer($item->getOffer()->getOfferQuantity(), $item->getQuantity()));
+        self::assertFalse($basket->applyOffer($item, $basket->getQuantity($item)));
     }
 
     /** @test */
@@ -186,9 +170,9 @@ class checkoutTest extends TestCase
         $offer = new Offer();
         $offer->setName('2 for 2.00');
         $offer->getAffectedItem('Peaches');
-        $offer->setItemPrice(1.10);
+        $offer->setOfferPrice(2);
 
-        self::assertEquals(1.10, $offer->getItemPrice());
+        self::assertEquals(2, $offer->getOfferPrice());
     }
 
     /** @test */
@@ -197,11 +181,32 @@ class checkoutTest extends TestCase
         $offer = new Offer();
         $offer->setName('2 for 2.00');
         $offer->getAffectedItem('Peaches');
-        $offer->setItemPrice(1.10);
+        $offer->setOfferPrice(2);
         $offer->setOfferQuantity(2);
 
         self::assertEquals(2, $offer->getOfferQuantity());
     }
 
+    /** @test */
+    public function checkQuantityOfItem()
+    {
+        $itemPeaches = new Item();
+        $itemPeaches->setName('Peaches');
+        $itemPeaches->setPrice(1.10);
+        $itemPeaches->setOfferExists(false);
+
+        $itemOrange = new Item();
+        $itemOrange->setName('Oranges');
+        $itemOrange->setPrice(1.0);
+        $itemOrange->setOfferExists(false);
+
+        $basket = new Basket();
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemOrange);
+
+        self::assertEquals(3, $basket->getQuantity($itemPeaches));
+    }
 
 }

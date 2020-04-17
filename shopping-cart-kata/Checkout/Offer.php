@@ -8,7 +8,7 @@ class Offer
 {
     private $offer;
     private $affectedItem;
-    private $itemPrice;
+    private $offerPrice;
     private $offerQuantity;
 
     public function setName(string $offer)
@@ -34,17 +34,17 @@ class Offer
     /**
      * @return mixed
      */
-    public function getItemPrice()
+    public function getOfferPrice()
     {
-        return $this->itemPrice;
+        return $this->offerPrice;
     }
 
     /**
      * @param mixed $price
      */
-    public function setItemPrice($itemPrice)
+    public function setOfferPrice($offerPrice)
     {
-        $this->itemPrice = $itemPrice;
+        $this->offerPrice = $offerPrice;
     }
 
     /**
