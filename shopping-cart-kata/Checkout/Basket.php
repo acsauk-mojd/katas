@@ -18,7 +18,7 @@ class Basket
         if ($item->getOfferExists()) {
             $this->offers = $item->getOfferExists();
 
-            $this->applyOffer($item, $this->getQuantity($item));
+            $this->applyOfferTypeQuantity($item, $this->getQuantity($item));
         }
 
         return $this;
@@ -39,7 +39,7 @@ class Basket
         return $this->offers;
     }
 
-    public function applyOffer(Item $item, int $quantity)
+    public function applyOfferTypeQuantity(Item $item, int $quantity)
     {
         if ($item->getOffer()->getOfferQuantity() === $quantity) {
 
