@@ -41,7 +41,7 @@ class Basket
 
     public function applyOfferTypeQuantity(Item $item, int $quantity)
     {
-        if ($item->getOffer()->getOfferQuantity() === $quantity) {
+        if ($item->getOffer()->getOfferTypeQuantity() === $quantity) {
 
             // subtract the cost of the item's original price and quantity for the offer
             $this->total -= ($item->getPrice() * $quantity);

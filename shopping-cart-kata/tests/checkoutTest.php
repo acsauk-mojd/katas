@@ -124,7 +124,7 @@ class checkoutTest extends TestCase
         $offer = new Offer();
         $offer->setName('2 for 1.50');
         $offer->getAffectedItem('Peaches');
-        $offer->setOfferQuantity(2);
+        $offer->setOfferTypeQuantity(2);
         $offer->setOfferPrice(1.5);
         $itemPeaches->setOffer($offer);
 
@@ -182,9 +182,9 @@ class checkoutTest extends TestCase
         $offer->setName('2 for 2.00');
         $offer->getAffectedItem('Peaches');
         $offer->setOfferPrice(2);
-        $offer->setOfferQuantity(2);
+        $offer->setOfferTypeQuantity(2);
 
-        self::assertEquals(2, $offer->getOfferQuantity());
+        self::assertEquals(2, $offer->getOfferTypeQuantity());
     }
 
     /** @test */
@@ -215,7 +215,14 @@ class checkoutTest extends TestCase
         $itemPeaches = new Item();
         $itemPeaches->setName('Peaches');
         $itemPeaches->setPrice(30);
-        $itemPeaches->setOfferExists(false);
+        $itemPeaches->setOfferExists(true);
+
+        $offer = new Offer();
+        $offer->setName('2 for 45');
+        $offer->setOfferPrice(45);
+        $offer->setOfferTypeQuantity(2);
+
+        $itemPeaches->setOffer($offer);
 
         $basket = new Basket();
         $basket->addItem($itemPeaches);
@@ -224,4 +231,91 @@ class checkoutTest extends TestCase
         self::assertEquals(45, $basket->getTotal());
     }
 
+    /** @test */
+    public function applyOfferThreeItems()
+    {
+        $itemPeaches = new Item();
+        $itemPeaches->setName('Peaches');
+        $itemPeaches->setPrice(30);
+        $itemPeaches->setOfferExists(true);
+
+        $offer = new Offer();
+        $offer->setName('2 for 45');
+        $offer->setOfferPrice(45);
+        $offer->setOfferTypeQuantity(2);
+
+        $itemPeaches->setOffer($offer);
+
+        $basket = new Basket();
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemPeaches);
+
+        self::assertEquals(75, $basket->getTotal());
+    }
+
+    /** @test */
+    public function applyOfferRandomItems()
+    {
+        $itemPeaches = new Item();
+        $itemPeaches->setName('Peaches');
+        $itemPeaches->setPrice(30);
+        $itemPeaches->setOfferExists(true);
+
+        $offer = new Offer();
+        $offer->setName('2 for 45');
+        $offer->setOfferPrice(45);
+        $offer->setOfferTypeQuantity(2);
+
+        $itemPeaches->setOffer($offer);
+
+        $itemOrange = new Item();
+        $itemOrange->setName('Oranges');
+        $itemOrange->setPrice(15);
+        $itemOrange->setOfferExists(false);
+
+        $basket = new Basket();
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemOrange);
+
+        self::assertEquals(60, $basket->getTotal());
+    }
+
+    /** @test */
+    public function applyTwoOffers()
+    {
+        $itemPeaches = new Item();
+        $itemPeaches->setName('Peaches');
+        $itemPeaches->setPrice(30);
+        $itemPeaches->setOfferExists(true);
+
+        $offer = new Offer();
+        $offer->setName('2 for 45');
+        $offer->setOfferPrice(45);
+        $offer->setOfferTypeQuantity(2);
+
+        $itemPeaches->setOffer($offer);
+
+        $itemOrange = new Item();
+        $itemOrange->setName('Oranges');
+        $itemOrange->setPrice(75);
+        $itemOrange->setOfferExists(false);
+
+        $offer = new Offer();
+        $offer->setName('3 for 130');
+        $offer->setOfferPrice(130);
+        $offer->setOfferTypeQuantity(3);
+
+        $itemOrange->setOffer($offer);
+
+        $basket = new Basket();
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemPeaches);
+        $basket->addItem($itemOrange);
+        $basket->addItem($itemOrange);
+        $basket->addItem($itemOrange);
+
+        self::assertEquals(175, $basket->getTotal());
+    }
 }

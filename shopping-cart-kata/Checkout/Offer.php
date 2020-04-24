@@ -50,7 +50,7 @@ class Offer
     /**
      * @return mixed
      */
-    public function getOfferQuantity()
+    public function getOfferTypeQuantity()
     {
         return $this->offerQuantity;
     }
@@ -58,7 +58,7 @@ class Offer
     /**
      * @param mixed $offerQuantity
      */
-    public function setOfferQuantity($offerQuantity)
+    public function setOfferTypeQuantity($offerQuantity)
     {
         $this->offerQuantity = $offerQuantity;
     }
