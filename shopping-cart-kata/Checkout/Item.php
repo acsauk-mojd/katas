@@ -10,8 +10,6 @@ class Item {
 
     private $name;
     private $price;
-    private $offerExists;
-    private $offer;
 
     public function setName($name)
     {
@@ -32,38 +30,5 @@ class Item {
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * @param bool $offer
-     */
-    public function setOfferExists(bool $offer)
-    {
-        $this->offerExists = $offer;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getOfferExists() : bool
-    {
-        return $this->offerExists;
-    }
-
-    /**
-     * @return Offer
-     */
-    public function getOffer() : Offer
-    {
-        return $this->offer;
-    }
-
-    /**
-     * @param Offer $offer
-     */
-    public function setOffer(Offer $offer)
-    {
-        $this->offer = $offer;
-        $this->setOfferExists(true);
     }
 }
