@@ -249,4 +249,46 @@ class checkoutTest extends TestCase
 
         self::assertEquals(2.10, $basket->getTotal());
     }
+
+    /** @test */
+    public function multipleOffersOnBasket()
+    {
+        $basket = new Basket();
+
+        $lemons = $this->createItem('Lemons', 0.80);
+        $limes = $this->createItem('Limes', 0.90);
+        $oranges = $this->createItem('Oranges', 0.60);
+
+        $offer1 = $this->createOffer('2 for 1.20', 1.20, 2, 'Lemons');
+        $offer2 = $this->createOffer('3 for 1.00', 1.00, 3, 'Limes');
+
+        $basket->setOffers([$offer1, $offer2]);
+
+        $basket = $this->addItemsToBasket($basket, [$lemons, $limes, $limes, $limes, $oranges, $lemons]);
+
+        self::assertEquals(2.80, $basket->getTotal());
+    }
+
+    public function createOffer(string $name, float $price, int $quantity, string $affectedItem) {
+        $offer = new Offer();
+        $offer->setName($name);
+        $offer->setOfferPrice($price);
+        $offer->setOfferTypeQuantity($quantity);
+        $offer->setAffectedItem($affectedItem);
+        return $offer;
+    }
+
+    public function createItem(string $name, float $price) {
+        $item = new Item();
+        $item->setName($name);
+        $item->setPrice($price);
+        return $item;
+    }
+
+    public function addItemsToBasket(Basket $basket, array $items) {
+        foreach ($items as $item) {
+            $basket->addItem($item);
+        }
+        return $basket;
+    }
 }
