@@ -1,0 +1,256 @@
+version: "2.1"
+
+volumes:
+  webpack_dist:
+
+services:
+  # ---------------------------
+  # Webpack Watch for Development
+
+  webpack:
+    container_name: webpack
+    image: webpack
+    build:
+      context: .
+      dockerfile: service-front/web/Dockerfile
+    entrypoint: >
+      sh -c "npm i && npm run build:pdf && npm run watch"
+    volumes:
+      - ./service-front/web:/web
+      - webpack_dist:/dist
+
+  # ---------------------------
+  # Viewer Front
+
+  service-pdf:
+    container_name: service-pdf
+    image: service-pdf
+    build:
+      context: .
+      dockerfile: service-pdf/docker/app/Dockerfile
+    ports:
+      - 9004:80
+
+  # ---------------------------
+  # Viewer Front
+
+  viewer-web:
+    container_name: viewer-web
+    image: front-web
+    build:
+      context: .
+      dockerfile: service-front/docker/web/Dockerfile
+    volumes:
+      - webpack_dist:/web
+    ports:
+      - 9001:80
+    environment:
+      APP_HOST: viewer-app
+      APP_PORT: 9000
+      NGINX_LOG_LEVEL: warn
+    depends_on:
+      - webpack
+
+  viewer-app:
+    container_name: viewer-app
+    image: viewer-app
+    build:
+      context: .
+      dockerfile: service-front/docker/app/Dockerfile
+    volumes:
+      - ./service-front/app:/app
+      - webpack_dist:/app/assets
+    environment:
+      # Always required
+      CONTEXT: "viewer"
+      KMS_SESSION_CMK_ALIAS: "alias/viewer-sessions-cmk-alias"
+
+      # Local only
+      API_SERVICE_URL: http://api-web
+      PDF_SERVICE_URL: http://service-pdf
+      AWS_ENDPOINT_KMS: http://kms:8080
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
+      LOGGING_LEVEL: "100" # \Monolog\Logger::DEBUG
+      ENABLE_XDEBUG: "true"
+      PHP_IDE_CONFIG: serverName=viewer-app
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
+      SESSION_EXPIRES: 20 # session expiry length to support timeout message.
+      COOKIE_EXPIRES: 1440 # cookie expiry for complete logout - initial value to be 24 hours.
+      COOKIE_SECURE: "false"
+    depends_on:
+      - redis
+
+  # ---------------------------
+  # Actor Front
+
+  actor-web:
+    container_name: actor-web
+    image: front-web
+    build:
+      context: .
+      dockerfile: service-front/docker/web/Dockerfile
+    volumes:
+      - webpack_dist:/web
+    ports:
+      - 9002:80
+    environment:
+      APP_HOST: actor-app
+      APP_PORT: 9000
+      NGINX_LOG_LEVEL: warn
+    depends_on:
+      - webpack
+
+  actor-app:
+    container_name: actor-app
+    image: actor-app
+    build:
+      context: .
+      dockerfile: service-front/docker/app/Dockerfile
+    volumes:
+      - ./service-front/app:/app
+      - webpack_dist:/app/assets
+    environment:
+      # Always required
+      CONTEXT: "actor"
+      KMS_SESSION_CMK_ALIAS: "alias/viewer-sessions-cmk-alias"
+
+      # Local only
+      API_SERVICE_URL: http://api-web
+      AWS_ENDPOINT_KMS: http://kms:8080
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
+      LOGGING_LEVEL: "100" # \Monolog\Logger::DEBUG
+      ENABLE_XDEBUG: "true"
+      PHP_IDE_CONFIG: serverName=actor-app
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
+      SESSION_EXPIRES: 20 # session expiry length to support timeout message.
+      COOKIE_EXPIRES: 1440 # cookie expiry for complete logout - initial value to be 24 hours.
+      COOKIE_SECURE: "false"
+
+  # ---------------------------
+  # Front Composer (Shared)
+
+  front-composer:
+    image: composer
+    volumes:
+      - ./service-front/app:/app
+    command:
+      - install
+      - --prefer-dist
+      - --no-suggest
+      - --no-interaction
+      - --no-scripts
+      - --optimize-autoloader
+      - --ignore-platform-reqs
+
+  # ---------------------------
+  # API
+
+  api-web:
+    container_name: api-web
+    image: api-web
+    build:
+      context: .
+      dockerfile: service-api/docker/web/Dockerfile
+    volumes:
+      - ./service-api/web/dist:/web
+    ports:
+      - 9003:80
+    environment:
+      APP_HOST: api-app
+      APP_PORT: 9000
+      NGINX_LOG_LEVEL: warn
+
+  api-app:
+    container_name: api-app
+    image: api-app
+    build:
+      context: .
+      dockerfile: service-api/docker/app/Dockerfile
+    volumes:
+      - ./service-api/app:/app
+    environment:
+      DYNAMODB_TABLE_ACTOR_CODES: "ActorCodes"
+      DYNAMODB_TABLE_ACTOR_USERS: "ActorUsers"
+      DYNAMODB_TABLE_VIEWER_CODES: "ViewerCodes"
+      DYNAMODB_TABLE_VIEWER_ACTIVITY: "ViewerActivity"
+      DYNAMODB_TABLE_USER_LPA_ACTOR_MAP: "UserLpaActorMap"
+
+      SIRIUS_API_ENDPOINT: "http://gateway:5000"
+
+      # Local only
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_ENDPOINT_DYNAMODB: http://localstack:4569
+      AWS_SECRET_ACCESS_KEY: "-"
+      LOGGING_LEVEL: "100" # \Monolog\Logger::DEBUG
+      ENABLE_XDEBUG: "true"
+      PHP_IDE_CONFIG: serverName=api-app
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_enable=1
+
+  api-composer:
+    image: composer
+    volumes:
+      - ./service-api/app:/app
+    command:
+      - install
+      - --prefer-dist
+      - --no-suggest
+      - --no-interaction
+      - --no-scripts
+      - --optimize-autoloader
+
+  api-seeding:
+    container_name: api-seeding
+    build:
+      context: .
+      dockerfile: service-api/docker/seeding/Dockerfile
+    depends_on:
+      - localstack
+    environment:
+      AWS_ACCESS_KEY_ID: "-"
+      AWS_SECRET_ACCESS_KEY: "-"
+      DYNAMODB_TABLE_ACTOR_CODES: "ActorCodes"
+      DYNAMODB_TABLE_VIEWER_CODES: "ViewerCodes"
+      DYNAMODB_TABLE_ACTOR_USERS: "ActorUsers"
+      AWS_ENDPOINT_DYNAMODB: localstack:4569
+
+  # ---------------------------
+  # Cache service
+
+  redis:
+    image: redis:5
+
+  # ---------------------------
+  # Local Development
+
+  gateway:
+    environment:
+      LAMBDAS_JSON_PROVIDER_PATH: ${PWD}/test-data/api-gateway.json
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - 4569:4569
+    environment:
+      - SERVICES=dynamodb:4569
+      - DEFAULT_REGION=eu-west-1
+      - HOSTNAME=localstack
+
+  kms:
+    image: nsmithuk/local-kms:2
+    volumes:
+      - ./local-config:/init
+    environment:
+      REGION: eu-west-1
+      SEED_PATH: /init/kms-seed.yaml
+
+  zap:
+    build:
+      context: zap
+
+#  feature-tests:
+#    build:
+#      context: features/
+#    volumes:
+#      - ./features:/tests/features

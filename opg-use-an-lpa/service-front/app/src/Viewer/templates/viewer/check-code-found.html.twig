@@ -1,0 +1,76 @@
+{% extends '@viewer/layout.html.twig' %}
+
+{% block html_title %}Code found - {{ parent() }} {% endblock %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        {{ include('@partials/new-service.html.twig') }}
+
+        <a href="{{ path('enter-code') }}" class="govuk-back-link">Back</a>
+
+        <main class="govuk-main-wrapper " id="main-content" role="main">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-xl">Is this the LPA you want to view?</h1>
+
+                    <table id="confirmation-table" class="govuk-table">
+                        <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Type of LPA</th>
+                            <td class="govuk-table__cell">{{ lpa.caseSubtype == 'pfa' ? 'Property and finance' : 'Health and welfare' }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Donor name</th>
+                            <td class="govuk-table__cell">{{ lpa.donor.firstname }} {{ lpa.donor.surname }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="row">Code expires</th>
+                            <td class="govuk-table__cell">in {{ days_remaining_to_expiry(expires) }} days, on {{ lpa_date(expires) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <details class="govuk-details" role="group">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                If you need to access this LPA after {{ lpa_date(expires) }}
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <p class="govuk-body">You will be able to view this LPA until {{ lpa_date(expires) }}. After this date, the access code will expire.</p>
+
+                            <p class="govuk-body">If your organisation needs more time to process this LPA, or if you need to view the LPA again at a later date, ask the the donor or attorney to generate a new access code for you. They can do this at <a class="govuk-link" href="https://use.lastingpowerofattorney.opg.service.justice.gov.uk">https://use.lastingpowerofattorney.opg.service.justice.gov.uk</a></p>
+
+                            <p class="govuk-body">Codes expire 30 days after they are generated.</p>
+                        </div>
+                    </details>
+
+                </div>
+            </div>
+
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Check that these details are correct before continuing
+                </strong>
+            </div>
+
+            <a href="{{ path('view-lpa') }}" role="button" draggable="false" class="govuk-button">
+                Continue
+            </a>
+
+            <p class="govuk-body">
+                <a class="govuk-link" href="{{ path('enter-code') }}">Re-enter the code</a>
+            </p>
+
+        </main>
+    </div>
+{% endblock %}

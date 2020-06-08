@@ -1,0 +1,59 @@
+{% extends '@viewer/layout.html.twig' %}
+
+{% block html_title %}Enter code - {{ parent() }} {% endblock %}
+
+{% block content %}
+<div class="govuk-width-container">
+    {{ include('@partials/new-service.html.twig') }}
+
+    <a href="/" class="govuk-back-link">Back</a>
+
+    <main class="govuk-main-wrapper" id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+
+            <div class="govuk-grid-column-two-thirds">
+
+                {{ govuk_error_summary(form) }}
+
+                {{ govuk_form_open(form) }}
+
+                    <fieldset class="govuk-fieldset">
+
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-heading-xl">
+                                Enter the LPA access code
+                            </h1>
+                        </legend>
+
+                        {{ govuk_form_element(form.get('__csrf')) }}
+
+                        <div class="govuk-!-width-one-half">
+
+                            {{ govuk_form_element(form.get('donor_surname'), { 'label': 'Donor surname' }) }}
+
+                            {{ govuk_form_element(form.get('lpa_code'), { 'label': 'LPA access code', 'input_prefix': 'V - ', 'attr' : {'class': 'govuk-input--width-10'}}) }}
+
+                        </div>
+
+                        <div class="govuk-inset-text">
+                            <p class="govuk-!-font-weight-bold">What is an LPA access code?</p>
+
+                            An LPA access code is a unique code given to you by the donor or an attorney named on a lasting power of attorney.
+                        </div>
+
+                        <p class="govuk-body">By continuing you agree to our <a href = "{{ path('viewer-terms-of-use') }}" class="govuk-link">terms of use</a>.</p>
+
+                        <button data-prevent-double-click="true" type="submit" class="govuk-button">Continue</button>
+
+                    </fieldset>
+
+                {{ govuk_form_close() }}
+
+            </div>
+
+        </div>
+
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+.DS_Store
+**/.terraform/
+**/terraform.tfstate.d/
+geckodriver.log
+.vscode/
+**__pycache__
+**/cluster_config.json
+features/failed_scenarios_screenshots/*
+
+.python-version

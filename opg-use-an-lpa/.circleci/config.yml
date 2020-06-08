@@ -1,0 +1,1054 @@
+version: 2.1
+
+workflows:
+  scheduled_jobs:
+    triggers:
+      - schedule:
+          cron: "0 8 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - use-my-lpa/redeploy_latest:
+          name: redeploy_demo
+          environment: demo
+      - slack_environment_redeploy:
+          name: post_production_release_message
+          environment: demo
+          requires: [redeploy_demo]
+
+  # workspace_cleanup:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 0,2,4,6,8,10,12,14,16,18,20,22 * * 0-6" # every 2 hours from midnight
+  #         filters:
+  #           branches:
+  #             only:
+  #               - master
+  #   jobs:
+  #     - workspace_cleanup:
+  #         name: workspace_cleanup
+
+  pr_build:
+      jobs:
+        - use-my-lpa/lint_terraform:
+            name: lint_terraform_pr_build
+            filters: { branches: { ignore: [master] } }
+
+        - use-my-lpa/node_test_web:
+            name: test_web_pr_build
+            filters: { branches: { ignore: [master] } }
+        - use-my-lpa/node_build_web:
+            name: build_web_pr_build
+            filters: { branches: { ignore: [master] } }
+            requires: [test_web_pr_build]
+        - use-my-lpa/node_test_service_pdf:
+            name: test_pdf_pr_build
+            filters: { branches: { ignore: [master] } }
+
+        - use-my-lpa/docker_build_front_app:
+            name: app_front_build_pr_build
+            filters: { branches: { ignore: [master] } }
+            requires: [build_web_pr_build]
+
+        - use-my-lpa/docker_build_front_web:
+            name: web_front_build_pr_build
+            filters: { branches: { ignore: [master] } }
+            requires: [build_web_pr_build]
+
+        - use-my-lpa/docker_build_api_app:
+            name: app_api_build_pr_build
+            filters: { branches: { ignore: [master] } }
+        - use-my-lpa/docker_build_api_web:
+            name: web_api_build_pr_build
+            filters: { branches: { ignore: [master] } }
+
+        - use-my-lpa/docker_build_pdf:
+            name: pdf_build_pr_build
+            filters: { branches: { ignore: [master] } }
+            requires: [test_pdf_pr_build]
+
+        - use-my-lpa/coveralls_upload:
+            name: coveralls_upload_pr_build
+            filters: { branches: { ignore: [master] } }
+            requires:
+              [
+                app_front_build_pr_build,
+                app_api_build_pr_build,
+                test_web_pr_build,
+                test_pdf_pr_build,
+              ]
+
+            # Provision and test development
+        - use-my-lpa/apply_shared_terraform:
+            name: dev_apply_shared_terraform
+            filters: { branches: { ignore: [master] } }
+            requires: [lint_terraform_pr_build]
+
+        - use-my-lpa/apply_environment_terraform:
+            name: dev_apply_environment_terraform
+            filters: { branches: { ignore: [master] } }
+            requires:
+              [
+                dev_apply_shared_terraform,
+                app_front_build_pr_build,
+                web_front_build_pr_build,
+                web_api_build_pr_build,
+                app_api_build_pr_build,
+                pdf_build_pr_build,
+              ]
+
+        - mark_workspace_as_protected:
+            name: mark_workspace_as_protected
+            filters: { branches: { ignore: [master] } }
+            requires: [dev_apply_environment_terraform]
+
+        - ecr_scan_results:
+            name: ecr_scan_results_development
+            filters: { branches: { ignore: [master] } }
+            requires:
+              [
+                app_front_build_pr_build,
+                web_front_build_pr_build,
+                web_api_build_pr_build,
+                app_api_build_pr_build,
+                pdf_build_pr_build,
+                dev_apply_environment_terraform,
+                ]
+
+        - use-my-lpa/seed_database:
+            name: dev_seed_database
+            filters: { branches: { ignore: [master] } }
+            requires: [dev_apply_environment_terraform]
+
+        - use-my-lpa/run_behave_suite:
+            name: dev_run_behave_tests
+            filters: { branches: { ignore: [master] } }
+            requires: [dev_seed_database]
+
+
+        - slack_notify_domain:
+            name: post_environment_domains
+            filters: { branches: { ignore: [master] } }
+            requires: [dev_run_behave_tests]
+
+        - hold-for-destruction:
+            name: hold_env_for_destruction
+            filters: { branches: { ignore: [master] } }
+            type: approval
+            requires: [dev_run_behave_tests]
+
+        - use-my-lpa/destroy_dev_environment:
+            name: dev_destroy_environment
+            filters: { branches: { ignore: [master] } }
+            requires: [hold_env_for_destruction]
+
+
+  path_to_live:
+      jobs:
+        # Common tasks
+        - use-my-lpa/node_test_web:
+            name: test_web_path_to_live
+            filters: { branches: { only: [master] } }
+        - use-my-lpa/node_build_web:
+            name: build_web_path_to_live
+            filters: { branches: { only: [master] } }
+            requires: [test_web_path_to_live]
+        - use-my-lpa/node_test_service_pdf:
+            name: test_pdf_path_to_live
+            filters: { branches: { only: [master] } }
+
+        - use-my-lpa/docker_build_front_app:
+            name: app_front_build_path_to_live
+            filters: { branches: { only: [master] } }
+            requires: [build_web_path_to_live]
+        - use-my-lpa/docker_build_front_web:
+            name: web_front_build_path_to_live
+            filters: { branches: { only: [master] } }
+            requires: [build_web_path_to_live]
+
+        - use-my-lpa/docker_build_api_app:
+            name: app_api_build_path_to_live
+            filters: { branches: { only: [master] } }
+        - use-my-lpa/docker_build_api_web:
+            name: web_api_build_path_to_live
+            filters: { branches: { only: [master] } }
+
+        - use-my-lpa/docker_build_pdf:
+            name: pdf_build_path_to_live
+            filters: { branches: { only: [master] } }
+            requires: [test_pdf_path_to_live]
+
+        - use-my-lpa/coveralls_upload:
+            name: coveralls_upload_path_to_live
+            filters: { branches: { only: [master] } }
+            requires:
+              [
+                app_front_build_path_to_live,
+                app_api_build_path_to_live,
+                test_web_path_to_live,
+                test_pdf_path_to_live,
+              ]
+
+        # Provision and test preproduction
+        - use-my-lpa/apply_shared_terraform:
+            name: preprod_apply_shared_terraform
+            workspace: preproduction
+            filters: { branches: { only: [master] } }
+
+        - use-my-lpa/apply_environment_terraform:
+            name: preprod_apply_environment_terraform
+            workspace: preproduction
+            filters: { branches: { only: [master] } }
+            requires:
+              [
+                preprod_apply_shared_terraform,
+                app_front_build_path_to_live,
+                web_front_build_path_to_live,
+                web_api_build_path_to_live,
+                app_api_build_path_to_live,
+                pdf_build_path_to_live,
+              ]
+        - ecr_scan_results:
+            name: ecr_scan_results_master
+            filters: { branches: { only: [master] } }
+            requires:
+              [
+                app_front_build_path_to_live,
+                web_front_build_path_to_live,
+                web_api_build_path_to_live,
+                app_api_build_path_to_live,
+                pdf_build_path_to_live,
+                preprod_apply_environment_terraform,
+              ]
+
+        - use-my-lpa/seed_database:
+            name: preprod_seed_database
+            filters: { branches: { only: [master] } }
+            requires: [preprod_apply_environment_terraform]
+
+        - use-my-lpa/run_behave_suite:
+            name: preprod_run_behave_tests
+            workspace: preproduction
+            filters: { branches: { only: [master] } }
+            requires: [preprod_seed_database]
+
+        # Provision and test production
+        - use-my-lpa/apply_shared_terraform:
+            name: production_apply_shared_terraform
+            workspace: production
+            filters: { branches: { only: [master] } }
+            requires: [preprod_run_behave_tests]
+        - use-my-lpa/apply_environment_terraform:
+            name: production_apply_environment_terraform
+            workspace: production
+            filters: { branches: { only: [master] } }
+            requires:
+              [
+                production_apply_shared_terraform,
+                app_front_build_path_to_live,
+                web_front_build_path_to_live,
+                web_api_build_path_to_live,
+                app_api_build_path_to_live,
+                pdf_build_path_to_live,
+              ]
+
+        - use-my-lpa/run_healthcheck_test:
+            name: prod_run_healthcheck_test
+            filters: { branches: { only: [master] } }
+            requires: [production_apply_environment_terraform]
+
+        - slack_notify_production_release:
+            name: post_production_release_message
+            filters: { branches: { only: [master] } }
+            requires: [prod_run_healthcheck_test]
+
+
+orbs:
+  slack: circleci/slack@3.3.0
+  use-my-lpa:
+    commands:
+      install_aws_cli:
+        steps:
+          - run:
+              name: Install AWS CLI
+              command: sudo pip3 install awscli --upgrade
+      install_webdriver:
+        steps:
+          - run:
+              name: Install WebDriver
+              command: |
+                wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz
+                sudo sh -c 'tar -x geckodriver -zf geckodriver-v0.23.0-linux64.tar.gz -O > /usr/bin/geckodriver'
+                sudo chmod +x /usr/bin/geckodriver
+                rm geckodriver-v0.23.0-linux64.tar.gz
+      ecr_login:
+        steps:
+          - run:
+              name: Login to ECR
+              command: |
+                temp_role=$(aws sts assume-role --role-arn arn:aws:iam::311462405659:role/opg-use-an-lpa-ci --role-session-name ci)
+                export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
+                export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
+                export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
+                aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com
+
+
+    executors:
+      puppeteer:
+        docker: [image: buildkite/puppeteer]
+      php:
+        docker: [image: circleci/php:7-cli]
+      node:
+        docker: [image: circleci/node:8.0]
+      python:
+        docker: [image: circleci/python]
+      python-browsers:
+        docker: [image: circleci/python:3.6-stretch-browsers]
+      terraform:
+        docker: [image: hashicorp/terraform]
+
+    jobs:
+      node_test_service_pdf:
+        executor: puppeteer
+        steps:
+          - checkout
+          - restore_cache:
+              name: Restore node modules cache
+              key: node_modules-{{ checksum "service-pdf/app/package-lock.json" }}
+          - run:
+              name: Install dependencies
+              command: |
+                if [ ! -d service-pdf/app/node_modules ]; then
+                  cd service-pdf/app/ && npm install
+                fi
+          - run:
+              name: Run tests with Jest
+              command: cd service-pdf/app/ && mkdir -p ./test-results/junit && ./node_modules/.bin/jest --ci --runInBand --reporters=default --reporters=jest-junit
+          - store_test_results:
+              path: service-pdf/app/test-results
+          - store_artifacts:
+              path: service-pdf/app/test-results/junit
+          - run:
+              name: Run coverage with Jest
+              command: |
+                mkdir -p /root/project/build/service-pdf
+                cd service-pdf/app/ && ./node_modules/.bin/jest --ci --runInBand --collectCoverage=true
+                cp -a ./coverage /root/project/build/service-pdf
+          - store_test_results:
+              path: build/service-pdf/
+          - store_artifacts:
+              path: build/service-pdf/
+          - persist_to_workspace:
+              root: build
+              paths:
+                - service-pdf/
+              when: always
+          - save_cache:
+              name: Save node modules cache
+              key: node_modules-{{ checksum "service-pdf/app/package-lock.json" }}
+              paths:
+                - service-pdf/app/node_modules
+
+      node_test_web:
+        #
+        # Build Docker container for Front App
+        #   and runs the Unit Tests.
+        #
+        executor: node
+        steps:
+          - checkout
+          - restore_cache:
+              name: Restore node modules cache
+              key: node_modules-{{ checksum "service-front/web/package-lock.json" }}
+          - run:
+              name: Install dependencies
+              command: |
+                if [ ! -d service-front/web/node_modules ]; then
+                  cd service-front/web/ && npm install
+                fi
+          - run:
+              name: Run tests with Jest
+              command: cd service-front/web/ && mkdir -p ./test-results/junit && ./node_modules/.bin/jest --ci --runInBand --reporters=default --reporters=jest-junit
+          - store_test_results:
+              path: service-front/web/test-results
+          - store_artifacts:
+              path: service-front/web/test-results/junit
+          - run:
+              name: Run coverage with Jest
+              command: |
+                mkdir -p /home/circleci/project/build/web-js
+                cd service-front/web/ && ./node_modules/.bin/jest --ci --runInBand --collectCoverage=true
+                cp -a ./coverage /home/circleci/project/build/web-js
+          - store_test_results:
+              path: build/web-js/
+          - store_artifacts:
+              path: build/web-js/
+          - persist_to_workspace:
+              root: build
+              paths:
+                - web-js/
+              when: always
+          - save_cache:
+              name: Save node modules cache
+              key: node_modules-{{ checksum "service-front/web/package-lock.json" }}
+              paths:
+                - service-front/web/node_modules
+
+      node_build_web:
+        #
+        # Build frontend assets (css, js, images)
+        #
+        executor: node
+        steps:
+          - checkout
+          - restore_cache:
+              name: Restore node modules cache
+              key: node_modules-{{ checksum "service-front/web/package-lock.json" }}
+          - run:
+              name: Install dependencies
+              command: |
+                if [ ! -d service-front/web/node_modules ]; then
+                  cd service-front/web/ && npm install
+                fi
+          - run:
+              name: Build assets
+              command: |
+                cd service-front/web/ && npm run build && npm run build:pdf_production
+          - save_cache:
+              name: Save node modules cache
+              key: node_modules-{{ checksum "service-front/web/package-lock.json" }}
+              paths:
+                - service-front/web/node_modules
+          - persist_to_workspace:
+              root: ~/project
+              paths:
+                - service-front/web/dist
+              when: always
+
+      #----------------------------------------------------
+      # Front Services (Actor & Viewer)
+
+      docker_build_front_app:
+        #
+        # Build Docker container for Front App
+        #   and runs the Unit Tests.
+        #
+        executor: python
+        parameters:
+          container_repo_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/use_an_lpa/front_app
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - attach_workspace:
+              at: ~/project
+          - run:
+              name: Build
+              command: |
+                mkdir -p service-front/app/assets/stylesheets \
+                  && cp -R ~/project/service-front/web/dist/stylesheets/pdf.css service-front/app/assets/stylesheets/pdf.css
+                docker build --file service-front/docker/app/Dockerfile --tag front-app:latest .
+          - run:
+              name: Run unit tests
+              command: |
+                docker run -d --name tests front-app:latest
+                docker exec tests docker-php-ext-enable xdebug
+                docker exec tests /app/vendor/bin/phpunit
+          - run:
+              name: Run integration/acceptance tests
+              command: |
+                docker run -d --name inttests front-app:latest
+                docker exec inttests /app/vendor/bin/behat -p integration -f progress -o std -f junit -o /app/build/reports/int
+                docker exec inttests /usr/local/bin/php -dapc.enable_cli=1 \
+                  /app/vendor/bin/behat -p acceptance -f progress -o std -f junit -o /app/build/reports/acc
+          - run:
+              name: Fetch test results
+              command: |
+                mkdir -p build/service-front
+                docker cp tests:/app/build/reports build/service-front/phpunit
+                docker cp inttests:/app/build/reports build/service-front/behat
+              when: always
+          - store_test_results:
+              path: build/service-front/
+          - store_artifacts:
+              path: build/service-front/
+          - persist_to_workspace:
+              root: build
+              paths:
+                - service-front/
+              when: always
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+
+                docker tag front-app:latest << parameters.container_repo_url >>:latest
+                docker tag front-app:latest << parameters.container_repo_url >>:${IMAGE_TAG}
+
+                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                  # We want all of the tags pushed
+                  docker push << parameters.container_repo_url >>
+                else
+                   docker push << parameters.container_repo_url >>:${IMAGE_TAG}
+                fi
+
+      docker_build_front_web:
+        #
+        # Build Docker container for Front Web
+        #
+        executor: python
+        parameters:
+          container_repo_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/use_an_lpa/front_web
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - attach_workspace:
+              at: ~/project
+          - run:
+              name: Build
+              command: |
+                cp -R ~/project/service-front/web/dist/* service-front/docker/web/web/
+                docker build --file service-front/docker/web/Dockerfile --tag front-web:latest .
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+
+                docker tag front-web:latest << parameters.container_repo_url >>:latest
+                docker tag front-web:latest << parameters.container_repo_url >>:${IMAGE_TAG}
+
+                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                  # We want all of the tags pushed
+                  docker push << parameters.container_repo_url >>
+                else
+                  docker push << parameters.container_repo_url >>:${IMAGE_TAG}
+                fi
+
+      #----------------------------------------------------
+      # API Service
+
+      docker_build_api_app:
+        #
+        # Build Docker container for API App
+        #   and runs the Unit Tests.
+        #
+        executor: python
+        parameters:
+          container_repo_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/use_an_lpa/api_app
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - run:
+              name: Build
+              command: |
+                docker build --file service-api/docker/app/Dockerfile --tag api-app:latest .
+          - run:
+              name: Run unit tests
+              command: |
+                docker run -d --name tests api-app:latest
+                docker exec tests docker-php-ext-enable xdebug
+                docker exec tests /app/vendor/bin/phpunit
+          - run:
+              name: Run integration/acceptance tests
+              command: |
+                docker run -d --name inttests api-app:latest
+                docker exec inttests /app/vendor/bin/behat -p integration -f progress -o std -f junit -o /app/build/reports/int
+                docker exec inttests /usr/local/bin/php -dapc.enable_cli=1 \
+                  /app/vendor/bin/behat -p acceptance -f progress -o std -f junit -o /app/build/reports/acc
+          - run:
+              name: Fetch test results
+              command: |
+                mkdir -p build/service-api
+                docker cp tests:/app/build/reports build/service-api/phpunit
+                docker cp inttests:/app/build/reports build/service-api/behat
+              when: always
+          - store_test_results:
+              path: build/service-api/
+          - store_artifacts:
+              path: build/service-api/
+          - persist_to_workspace:
+              root: build
+              paths:
+                - service-api/
+              when: always
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+
+                docker tag api-app:latest << parameters.container_repo_url >>:latest
+                docker tag api-app:latest << parameters.container_repo_url >>:${IMAGE_TAG}
+
+                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                  # We want all of the tags pushed
+                  docker push << parameters.container_repo_url >>
+                else
+                   docker push << parameters.container_repo_url >>:${IMAGE_TAG}
+                fi
+
+      docker_build_api_web:
+        #
+        # Build Docker container for API Web
+        #
+        executor: python
+        parameters:
+          container_repo_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/use_an_lpa/api_web
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - run:
+              name: Build
+              command: |
+                docker build --file service-api/docker/web/Dockerfile --tag api-web:latest .
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+
+                docker tag api-web:latest << parameters.container_repo_url >>:latest
+                docker tag api-web:latest << parameters.container_repo_url >>:${IMAGE_TAG}
+
+                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                  # We want all of the tags pushed
+                  docker push << parameters.container_repo_url >>
+                else
+                  docker push << parameters.container_repo_url >>:${IMAGE_TAG}
+                fi
+
+      docker_build_pdf:
+        #
+        # Build Docker container for PDF Generator
+        #   and runs the Unit Tests.
+        #
+        executor: python
+        parameters:
+          container_repo_url:
+            type: string
+            default: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/use_an_lpa/pdf
+        steps:
+          - checkout
+          - install_aws_cli
+          - setup_remote_docker:
+              version: 18.06.0-ce
+              docker_layer_caching: false
+          - run:
+              name: Build
+              command: |
+                docker build --file service-pdf/docker/app/Dockerfile --tag pdf:latest .
+          - ecr_login
+          - run:
+              name: Push container
+              command: |
+                export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+
+                docker tag pdf:latest << parameters.container_repo_url >>:latest
+                docker tag pdf:latest << parameters.container_repo_url >>:${IMAGE_TAG}
+
+                if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                  # We want all of the tags pushed
+                  docker push << parameters.container_repo_url >>
+                else
+                  docker push << parameters.container_repo_url >>:${IMAGE_TAG}
+                fi
+
+
+
+      # Code Coverage
+
+      codecov_php-unit_upload:
+        #
+        # Upload all php-unit test results
+        #   to Codecov.
+        #
+        executor: python
+        steps:
+          - checkout
+          - attach_workspace:
+              at: build
+          - run:
+              name: Upload to Codecov
+              command: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN || echo 'Codecov upload failed'
+
+      coveralls_upload:
+        executor: php
+        steps:
+          - checkout
+          - attach_workspace:
+              at: build
+          - run:
+              name: Install coveralls upload tool
+              command: |
+                wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
+                chmod +x php-coveralls.phar
+          - run:
+              name: Fix coverage report paths
+              command: |
+                sed 's_/app/src/_/home/circleci/project/service-api/app/src/_' <build/service-api/phpunit/coverage.xml > build/service-api/phpunit/coverage-fixed.xml
+                sed 's_/app/src/_/home/circleci/project/service-front/app/src/_' <build/service-front/phpunit/coverage.xml > build/service-front/phpunit/coverage-fixed.xml
+          - run:
+              name: Upload report
+              command: |
+                ./php-coveralls.phar -v \
+                  --json_path build/coveralls-upload.json \
+                  --coverage_clover build/service-api/phpunit/coverage-fixed.xml \
+                  --coverage_clover build/service-front/phpunit/coverage-fixed.xml
+
+      #----------------------------------------------------
+      # Terraform
+
+      lint_terraform:
+        #
+        # Lint the Terraform
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH}"
+        steps:
+          - checkout
+          - run:
+              name: Lint Shared Terraform
+              command: |
+                terraform --version
+                cd ~/project/terraform/account
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                terraform validate
+          - run:
+              name: Lint Environment Terraform
+              command: |
+                cd ~/project/terraform/environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+                terraform validate -var container_version=${IMAGE_TAG}
+
+      apply_shared_terraform:
+        #
+        # Apply the shared terraform configuration. This:
+        #   - Updates the shared infrastructure;
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: development
+        environment:
+          TF_WORKSPACE: "<<parameters.workspace>>"
+        steps:
+          - checkout
+          - run:
+              name: Apply Shared Terraform
+              command: |
+                cd ~/project/terraform/account
+                terraform init -lock-timeout=300s
+                terraform apply -lock-timeout=300s --auto-approve
+      apply_environment_terraform:
+        #
+        # Apply the environment terraform configuration. This:
+        #   - Updates per environment infrastructure; and
+        #   - Triggers a deploy of the updated container (if changed)
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH}"
+        steps:
+          - checkout
+          - run:
+              name: Apply Environment Terraform
+              command: |
+                cd ~/project/terraform/environment
+                terraform init -lock-timeout=300s
+                export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+                terraform apply -lock-timeout=300s --auto-approve -var container_version=${IMAGE_TAG}
+                mv cluster_config.json /tmp/
+          - persist_to_workspace:
+              root: /tmp
+              paths:
+                - cluster_config.json
+
+      destroy_dev_environment:
+        #
+        # Destroys a development environment after testing and approval
+        #
+        executor: terraform
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH}"
+        steps:
+          - checkout
+          - run:
+              name: Destroy Development Environment
+              command: |
+                if [ "${CIRCLE_BRANCH}" != "master" ]; then
+                  cd ~/project/terraform/environment
+                  terraform init -lock-timeout=300s
+                  export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                  echo $TF_WORKSPACE
+                  terraform destroy -lock-timeout=300s -auto-approve
+                fi
+      redeploy_latest:
+        #
+        # Redeploy ECS services on an environment
+        #
+        executor: python
+        parameters:
+          environment:
+            type: string
+        steps:
+          - checkout
+          - install_aws_cli
+          - run:
+              name: Redeploy Services
+              command: |
+                export ACCOUNT_ID=$(~/project/scripts/pipeline/identify_account_id.sh <<parameters.environment>>)
+                temp_role=$(aws sts assume-role --role-arn arn:aws:iam::$ACCOUNT_ID:role/opg-use-an-lpa-ci --role-session-name ci)
+                export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
+                export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
+                export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
+                aws ecs update-service --cluster <<parameters.environment>>-use-an-lpa --force-new-deployment --service api --region eu-west-1
+                aws ecs update-service --cluster <<parameters.environment>>-use-an-lpa --force-new-deployment --service pdf --region eu-west-1
+                aws ecs update-service --cluster <<parameters.environment>>-use-an-lpa --force-new-deployment --service actor --region eu-west-1
+                aws ecs update-service --cluster <<parameters.environment>>-use-an-lpa --force-new-deployment --service viewer --region eu-west-1
+      #----------------------------------------------------
+      # Seeding
+
+      seed_database:
+        #
+        # Seed database with test data
+        #
+        executor: python
+        steps:
+          - checkout
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Seed DynamoDB
+              command: |
+                sudo pip3 install -r service-api/seeding/requirements.txt
+                export AWS_ACCOUNT_ID=$(cat /tmp/cluster_config.json | jq .account_id | xargs)
+                export DYNAMODB_TABLE_ACTOR_CODES=$(cat /tmp/cluster_config.json | jq .actor_lpa_codes_table | xargs)
+                export DYNAMODB_TABLE_VIEWER_CODES=$(cat /tmp/cluster_config.json | jq .viewer_codes_table | xargs)
+                export DYNAMODB_TABLE_ACTOR_USERS=$(cat /tmp/cluster_config.json | jq .actor_users_table | xargs)
+                python service-api/seeding/dynamodb.py
+
+      #----------------------------------------------------
+      # Tests
+
+      run_behave_suite:
+        #
+        # Run the full set of functional tests
+        #
+        executor: python-browsers
+        parameters:
+          workspace:
+            description: Terraform workspace name
+            type: string
+            default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH}"
+        steps:
+          - checkout
+          - install_webdriver
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                sudo pip3 install boto3 -q
+                python scripts/pipeline/aws_ecs_task/aws_ecs_task.py /tmp/cluster_config.json
+          - run:
+              name: Install Behave
+              command: sudo pip3 install behave selenium --upgrade
+          - run:
+              name: Allow CircleCI ingress to environment
+              command: |
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                if [ "${TF_WORKSPACE}" != "production" ]; then
+                  python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/cluster_config.json --add
+                fi
+
+          - run:
+              name: Run suite
+              command: |
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                export IMAGE_TAG=$(~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+                echo $IMAGE_TAG
+                behave -v --logging-level DEBUG
+          - store_artifacts:
+              path: features/failed_scenarios_screenshots
+          - run:
+              name: Remove CircleCI ingress to environment
+              command: |
+                export TF_WORKSPACE=$(bash ~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+                echo $TF_WORKSPACE
+                python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/cluster_config.json
+              when: always
+
+      run_healthcheck_test:
+        #
+        # Checks the health check is returning 200
+        #
+        executor: python
+        steps:
+          - checkout
+          - install_webdriver
+          - attach_workspace:
+              at: /tmp
+          - run:
+              name: Wait for new tasks in services to be running
+              command: |
+                sudo pip3 install boto3
+                python scripts/pipeline/aws_ecs_task/aws_ecs_task.py /tmp/cluster_config.json
+          - run:
+              name: Run test
+              command: |
+                viewer_fqdn=$(cat /tmp/cluster_config.json | jq .viewer_fqdn | xargs)
+                viewer_response=$(curl --write-out %{http_code} --silent --output /dev/null https://$viewer_fqdn/healthcheck)
+                [[ $viewer_response == 200 ]] || (echo "Error with viewer health check. HTTP status: ${viewer_response}" && exit 1)
+
+                actor_fqdn=$(cat /tmp/cluster_config.json | jq .actor_fqdn | xargs)
+                # TODO Add for actor when endpoint exists.
+
+jobs:
+  slack_environment_redeploy:
+    docker:
+      - image: circleci/python
+    parameters:
+      environment:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Get Commit Message
+          command: |
+            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
+      - slack/notify:
+          title: "Use a Lasting Power of Attorney - <<parameters.environment>> environment updated"
+          color: "#4287f5"
+          message: "Scheduled update of <<parameters.environment>> environment complete"
+          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+  slack_notify_domain:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Get URLs
+          command: |
+            echo 'export VIEW_DOMAIN="$(jq -r .viewer_fqdn /tmp/cluster_config.json)"' >> $BASH_ENV
+            echo 'export USE_DOMAIN="$(jq -r .actor_fqdn /tmp/cluster_config.json)"' >> $BASH_ENV
+            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
+      - slack/notify:
+          title: "Use a Lasting Power of Attorney Development Environment Ready"
+          color: "#9933ff"
+          message: "User: $CIRCLE_USERNAME \nview url: https://$VIEW_DOMAIN \nuse url: https://$USE_DOMAIN"
+          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+
+  slack_notify_production_release:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Get URLs
+          command: |
+            echo 'export VIEW_DOMAIN="$(jq -r .viewer_fqdn /tmp/cluster_config.json)"' >> $BASH_ENV
+            echo 'export USE_DOMAIN="$(jq -r .actor_fqdn /tmp/cluster_config.json)"' >> $BASH_ENV
+            echo 'export COMMIT_MESSAGE="$(git log -1 --pretty=%B)"' >> $BASH_ENV
+      - slack/notify:
+          title: "Use a Lasting Power of Attorney Production Release Successful"
+          color: "#9933ff"
+          message: "User: $CIRCLE_USERNAME \nview url: https://$VIEW_DOMAIN \nuse url: https://$USE_DOMAIN"
+          webhook: ${PROD_RELEASE_SLACK_WEBHOOK}
+          footer: "$CIRCLE_BRANCH - Commit Message: $COMMIT_MESSAGE"
+
+  ecr_scan_results:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - run:
+          name: Check ECR Scan Results
+          command: |
+            sudo pip3 install -r scripts/pipeline/requirements.txt
+            export IMAGE_TAG=$(bash ~/project/scripts/pipeline/set_environment_variables/set_image_tag.sh $CIRCLE_BRANCH $CIRCLE_SHA1) >> $BASH_ENV
+            echo $IMAGE_TAG
+            python scripts/pipeline/check_ecr_scan_results/aws_ecr_scan_results.py --search use_an_lpa --tag $IMAGE_TAG
+
+  workspace_cleanup:
+    docker:
+      - image: hashicorp/terraform
+    steps:
+      - checkout
+      - run:
+          name: Cleanup Workspaces
+          command: |
+            cd terraform/environment
+            terraform init -lock-timeout=300s
+            ../../scripts/pipeline/workspace_cleanup/workspace_cleanup.sh $(../../scripts/pipeline/workspace_cleanup/get_workspaces_linux)
+
+  mark_workspace_as_protected:
+    docker:
+      - image: hashicorp/terraform
+    parameters:
+      workspace:
+        description: Terraform workspace name
+        type: string
+        default: "${CIRCLE_PULL_REQUEST##*/}-${CIRCLE_BRANCH}"
+    steps:
+      - checkout
+
+      - run:
+          name: Mark Workspace for Cleanup
+          command: |
+            export TF_WORKSPACE=$(~/project/scripts/pipeline/set_environment_variables/set_workspace.sh <<parameters.workspace>>) >> $BASH_ENV
+            ~/project/scripts/pipeline/workspace_cleanup/put_workspace_linux -workspace=$TF_WORKSPACE
