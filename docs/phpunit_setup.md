@@ -65,6 +65,8 @@ $ touch phpunit.xml
 To test that everything is hooked up right add a dummy class and test:
 
 ```php
+# src/ExampleClass.php
+
 <?php declare(strict_types=1);
 
 namespace App;
@@ -79,6 +81,8 @@ class ExampleClass
 ```
 
 ```php
+# tests/ExampleTest.php
+
 <?php declare(strict_types=1);
 
 namespace App\Tests;
