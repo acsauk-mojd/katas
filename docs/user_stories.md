@@ -1,4 +1,4 @@
-#User Stories
+# User Stories
 
 The purpose of a User Story is to describes a feature of an app, from the perspective of somebody using the app. A combination of user stories will be used to distill the requirements of a system. A systems is made up of Objects and Messages, where Objects describe the objects within the system, and Messages describe how those objects interact. We call these systems Domain Models.
 
@@ -31,7 +31,7 @@ I need to know if the escooter I'm interested in is working
 
 
 
-<details><summary>A possible solution</summary>
+<details><summary>A possible solution...</summary>
 
     Objects  | Messages
     ------------- | -------------
