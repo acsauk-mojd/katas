@@ -69,24 +69,61 @@ I'd like vans to collect working escooters from garages and distribute them to d
 If you're unsure on how to setup PHPUnit (or something has gone wrong) then see the steps [here](https://github.com/acsauk-mojd/katas/blob/escooters/docs/phpunit_setup.md) on getting ready to write your first test.
 
 Try to keep this pattern in mind:
-* Write a failing test <span style="color:red">(Red)</span>
+* Write a failing test (Red)
 * Run phpunit
 * Read the feedback from phpunit
 * Make the smallest possible change in order to move the message on
 * If still failing, repeat the three steps above
-* Once the test has passed <span style="color:green">(Green)</span>, look for any opportunities to streamline the code or reduce repetition/complexity (Refactor)
+* Once the test has passed (Green), look for any opportunities to streamline the code or reduce repetition/complexity (Refactor)
 * Go back to the first step
 
-Having a hard time getting started? Take a look at this test case for the first user story:
+Having a hard time getting started? Take a look at this test case and classes for the first user story:
 
 <details><summary>Hints</summary>
 
 ```php
-    public function testReleaseBike()
+<?php declare(strict_types=1);
+
+
+namespace App\Tests;
+
+class DockingStationTest
+{
+    public function testReleaseScooter()
     {
         $dockingStation = new DockingStation();
         $scooter = $dockingStation->releaseScooter();
         self::assertInstanceOf(Scooter::class, $scooter);
     }
+}
+
 ```
+
+```php
+<?php declare(strict_types=1);
+
+
+namespace App;
+
+class DockingStation
+{
+    public function releaseScooter()
+    {
+        return new Scooter();
+    }
+}
+```
+
+```php
+<?php declare(strict_types=1);
+
+
+namespace App;
+
+class Scooter
+{
+
+}
+```
+
 </details>
