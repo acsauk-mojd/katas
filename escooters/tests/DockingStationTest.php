@@ -30,4 +30,21 @@ class DockingStationTest extends TestCase
        $this->assertTrue($isWorking, "");
     }
 
+    //As a member of the public
+    //So I can return an escooter I've rented
+    //I want to dock my escooter at the docking station
+    public function testReturnEScooter()
+    {
+        $station = new DockingStation();
+        $escooter = new EScooter();
+
+        $receivedEscooter = $station->hasDockedEScooter();
+        $this->assertFalse($receivedEscooter);
+
+
+        $station->returnEscooter($escooter);
+        $returnedScooter = $station->hasDockedEScooter();
+        $this->assertTrue($returnedScooter);
+    }
+
 }

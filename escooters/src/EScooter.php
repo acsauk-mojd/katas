@@ -4,7 +4,7 @@ namespace App;
 
 class EScooter
 {
-    static public function trueIsTrue()
+    static public function isWorking()
     {
         return true;
     }
