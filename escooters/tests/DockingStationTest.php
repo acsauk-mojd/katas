@@ -79,10 +79,13 @@ class DockingStationTest extends TestCase
         $escooter1 = new EScooter();
         $escooter2 = new EScooter();
         $escooter3 = new EScooter();
+
+        $this->expectException(\Exception::class);
+
         $station->dockEscooter($escooter1);
         $station->dockEscooter($escooter2);
         $station->dockEscooter($escooter3);
-        $this->expectException(\Exception::class);
+
     }
 
 }
