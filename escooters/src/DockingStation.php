@@ -4,11 +4,11 @@ namespace App;
 
 class DockingStation
 {
-    public $escooter;
+    public ?EScooter $escooter = null;
 
     public function releaseEScooter()
     {
-        return new EScooter();
+        return $this->escooter;
     }
 
     public function hasDockedEScooter(): bool

@@ -16,6 +16,8 @@ class DockingStationTest extends TestCase
     public function testCanReleaseEScooter()
     {
         $station = new DockingStation();
+        $escooter = new EScooter();
+        $station -> dockEscooter($escooter);
         $escooter = $station->releaseEScooter();
         $this->assertInstanceOf(EScooter::class, $escooter);
     }
@@ -67,4 +69,20 @@ class DockingStationTest extends TestCase
 
         $this->assertNull($station->releaseEScooter());
     }
+
+    //As a maintainer of the system,
+    //So that I can control the distribution of escooters,
+    //I'd like docking stations not to accept more escooters than their capacity.
+    public function testStationNotAcceptEScooterAboveCapacity(){
+        $station = new DockingStation();
+        $station->capacity = 2;
+        $escooter1 = new EScooter();
+        $escooter2 = new EScooter();
+        $escooter3 = new EScooter();
+        $station->dockEscooter($escooter1);
+        $station->dockEscooter($escooter2);
+        $station->dockEscooter($escooter3);
+        $this->expectException(\Exception::class);
+    }
+
 }
