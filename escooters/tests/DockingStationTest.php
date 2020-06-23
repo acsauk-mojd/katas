@@ -31,9 +31,21 @@ class DockingStationTest extends TestCase
     }
 
     //As a member of the public
+    //So I can decide whether to use the docking station
+    //I want to see a an escooter that has been docked
+    public function testIfEscooterHasBeenDocked()
+    {
+        $station = new DockingStation();
+        $escooter = new EScooter();
+
+        $station->dockEscooter($escooter);
+        $this->assertEquals($escooter, $station->escooter);
+    }
+
+    //As a member of the public
     //So I can return an escooter I've rented
     //I want to dock my escooter at the docking station
-    public function testReturnEScooter()
+    public function testUserCanDockEScooter()
     {
         $station = new DockingStation();
         $escooter = new EScooter();
@@ -41,10 +53,18 @@ class DockingStationTest extends TestCase
         $receivedEscooter = $station->hasDockedEScooter();
         $this->assertFalse($receivedEscooter);
 
-
-        $station->returnEscooter($escooter);
+        $station->dockEscooter($escooter);
         $returnedScooter = $station->hasDockedEScooter();
         $this->assertTrue($returnedScooter);
     }
 
+    //As a member of the public,
+    //So that I am not confused and charged unnecessarily,
+    //I'd like docking stations not to release escooters when there are none available.
+    public function testStationOnlyReleasesEScooterWhenOccupied()
+    {
+        $station = new DockingStation();
+
+        $this->assertNull($station->releaseEScooter());
+    }
 }
