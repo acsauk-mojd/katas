@@ -16,19 +16,24 @@ class DockingStationTest extends TestCase
      */
     private DockingStation $station;
 
+    /**
+     * @var EScooter
+     */
+    private $escooter;
+
     public function setUp(): void
     {
-        $this->station = new DockingStation();
+        $this->station  = new DockingStation();
+        $this->escooter = new EScooter();
     }
     //As a person,
     //So that I can ride an escooter,
     //I need a docking station to release a escooter.
     public function testCanReleaseEScooter()
     {
-        $escooter = new EScooter();
-        $this->station -> dockEscooter($escooter);
-        $escooter = $this->station->releaseEScooter();
-        $this->assertInstanceOf(EScooter::class, $escooter);
+        $this->station -> dockEscooter($this->escooter);
+        $this->escooter = $this->station->releaseEScooter();
+        $this->assertInstanceOf(EScooter::class, $this->escooter);
     }
 
     //As a person,
@@ -36,8 +41,7 @@ class DockingStationTest extends TestCase
     //I need to know if the escooter I'm interested in is working
     public function testEScooterIsWorking()
     {
-       $escooter = new EScooter();
-       $isWorking = $escooter->isWorking();
+       $isWorking = $this->escooter->isWorking();
        $this->assertTrue($isWorking, "");
     }
 
@@ -46,10 +50,8 @@ class DockingStationTest extends TestCase
     //I want to see a an escooter that has been docked
     public function testIfEscooterHasBeenDocked()
     {
-        $escooter = new EScooter();
-
-        $this->station->dockEscooter($escooter);
-        $this->assertEquals($escooter, $this->station->escooter);
+        $this->station->dockEscooter($this->escooter);
+        $this->assertEquals($this->escooter, $this->station->escooter);
     }
 
     //As a member of the public
@@ -57,12 +59,10 @@ class DockingStationTest extends TestCase
     //I want to dock my escooter at the docking station
     public function testUserCanDockEScooter()
     {
-        $escooter = new EScooter();
-
         $receivedEscooter = $this->station->hasDockedEScooter();
         $this->assertFalse($receivedEscooter);
 
-        $this->station->dockEscooter($escooter);
+        $this->station->dockEscooter($this->escooter);
         $returnedScooter = $this->station->hasDockedEScooter();
         $this->assertTrue($returnedScooter);
     }
@@ -72,8 +72,6 @@ class DockingStationTest extends TestCase
     //I'd like docking stations not to release escooters when there are none available.
     public function testStationOnlyReleasesEScooterWhenOccupied()
     {
-        $this->station = new DockingStation();
-
         $this->assertNull($this->station->releaseEScooter());
     }
 
@@ -85,15 +83,12 @@ class DockingStationTest extends TestCase
     //I want to be able to specify a larger capacity of escooters when necessary.
     public function testStationNotAcceptEScooterAboveCapacity(){
         $this->station->capacity = 2;
-        $escooter1 = new EScooter();
-        $escooter2 = new EScooter();
-        $escooter3 = new EScooter();
 
         $this->expectException(\Exception::class);
 
-        $this->station->dockEscooter($escooter1);
-        $this->station->dockEscooter($escooter2);
-        $this->station->dockEscooter($escooter3);
+        $this->station->dockEscooter($this->escooter);
+        $this->station->dockEscooter($this->escooter);
+        $this->station->dockEscooter($this->escooter);
     }
 
     //As a system maintainer,
@@ -102,27 +97,35 @@ class DockingStationTest extends TestCase
     public function testStationHasCapacityOf20Escooters(){
 
         for ($i=0; $i < 20; $i++) {
-            $escooter = new EScooter();
-            $this->station->dockEscooter($escooter);
+            $this->station->dockEscooter($this->escooter);
         }
 
         $this->expectException(\Exception::class);
 
-        $this->station->dockEscooter($escooter);
+        $this->station->dockEscooter($this->escooter);
     }
 
     //As a member of the public,
     //So that I reduce the chance of getting a broken escooters in future,
     //I'd like to report an escooters as broken when I return it.
     public function testEScooterReportedAsBrokenWhenReturned(){
-        $escooter = new EScooter();
-        $normalScooter = $escooter->isBroken();
-        $this->AssertEquals(false, $normalScooter);
+        $this->AssertEquals(false, $this->escooter->isBroken());
 
-        $escooter->reportedBroken();
+        $this->escooter->reportedBroken();
 
-        $brokenScooter = $escooter->isBroken();
-        $this->AssertEquals(true,$brokenScooter);
+        $this->AssertEquals(true, $this->escooter->isBroken());
+    }
+
+    //As a maintainer of the system,
+    //So that I can manage broken escooters and not disappoint users,
+    //I'd like docking stations not to release broken escooters.
+    public function testStationDoesNotReleaseBrokenEscooters()
+    {
+        $this->escooter->reportedBroken();
+        $this->station->dockEscooter($this->escooter);
+
+        $this->expectException(\Exception::class);
+        $this->station->releaseEScooter();
     }
 
 }
