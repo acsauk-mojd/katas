@@ -85,7 +85,23 @@ class DockingStationTest extends TestCase
         $station->dockEscooter($escooter1);
         $station->dockEscooter($escooter2);
         $station->dockEscooter($escooter3);
+    }
 
+    //As a system maintainer,
+    //So that I can plan the distribution of escooters,
+    //I want a docking station to have a default capacity of 20 escooters.
+    public function testStationHasCapacityOf20Escooters(){
+
+        $station = new DockingStation();
+
+        for ($i=0; $i <= 20; $i++) {
+            $escooter = new EScooter();
+            $station->dockEscooter($escooter);
+        }
+
+        $this->expectException(\Exception::class);
+
+        $station->dockEscooter($escooter);
     }
 
 }
