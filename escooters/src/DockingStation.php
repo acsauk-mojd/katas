@@ -7,7 +7,7 @@ use Exception;
 class DockingStation
 {
     public ?EScooter $escooter = null;
-    public int $capacity = 2;
+    public int $capacity = 20;
     public int $counter = 0;
 
     public function releaseEScooter()
