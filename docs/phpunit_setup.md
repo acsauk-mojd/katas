@@ -119,8 +119,8 @@ Your project structure should look like this:
 ```
 
 From the root directory, run:
-
 ```shell script
+$ composer dump-autoload
 $ vendor/bin/phpunit
 ```
 
