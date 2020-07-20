@@ -12,6 +12,9 @@ class DockingStation
 
     public function releaseEScooter()
     {
+        if(!is_null($this->escooter) && $this->escooter->isBroken()){
+            throw new Exception('This Escooter is broken');
+        }
         return $this->escooter;
     }
 

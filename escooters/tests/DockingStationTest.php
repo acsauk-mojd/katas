@@ -128,4 +128,23 @@ class DockingStationTest extends TestCase
         $this->station->releaseEScooter();
     }
 
+    //As a maintainer of the system,
+    //So that I can manage broken escooters and not disappoint users,
+    //I'd like vans to take broken escooters from docking stations and deliver them to garages to be fixed.
+    public function testVansTakeBrokenEscootersToGarages()
+    {
+        $van = new Van();
+
+        $brokenEscooter = new EScooter();
+        $brokenEscooter->reportedBroken();
+
+        $this->station->dockEscooter($brokenEscooter);
+        $this->station->dockEscooter($this->escooter);
+
+        $this->station->releaseBrokenEscooters($van);
+
+        $this->AssertEquals(true, $van->contains($brokenEscooter));
+        $this->AssertEquals($this->escooter, $this->station->releaseEScooter());
+    }
+
 }
