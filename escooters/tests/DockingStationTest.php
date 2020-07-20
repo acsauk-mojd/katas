@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Van;
 use PHPUnit\Framework\TestCase;
 use App\DockingStation;
 use App\EScooter;
@@ -143,7 +144,7 @@ class DockingStationTest extends TestCase
 
         $this->station->releaseBrokenEscooters($van);
 
-        $this->AssertEquals(true, $van->contains($brokenEscooter));
+        $this->assertSame($brokenEscooter, $van->releaseEscooter());
         $this->AssertEquals($this->escooter, $this->station->releaseEScooter());
     }
 

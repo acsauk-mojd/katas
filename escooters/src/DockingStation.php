@@ -6,7 +6,7 @@ use Exception;
 
 class DockingStation
 {
-    public ?EScooter $escooter = null;
+    public array $escooters = [];
     public int $capacity = 20;
     public int $counter = 0;
 
@@ -33,6 +33,13 @@ class DockingStation
         $this->escooter = $escooter;
         if($this->counter > $this->capacity ) {
             throw new Exception('No capacity to accept another scooter');
+        }
+    }
+
+    public function releaseBrokenEscooters(Van $van)
+    {
+        if(!is_null($this->escooter) && $this->escooter->isBroken()){
+            $van->collectBrokenEscooter($this->escooter);
         }
     }
 }
