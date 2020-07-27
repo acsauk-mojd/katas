@@ -12,10 +12,17 @@ class DockingStation
 
     public function releaseEScooter()
     {
-        if(!is_null($this->escooter) && $this->escooter->isBroken()){
+        for ($i = 0; $i > count($this->escooters); $i++) {
+            if (!$this->escooters[$i]->isBroken()) {
+                $escooter = $this->escooters[$i];
+            }
+        }
+
+        if(!is_null($this->escooters) && !isset($escooter)){
             throw new Exception('This Escooter is broken');
         }
-        return $this->escooter;
+
+        return $this->escooters;
     }
 
     public function hasDockedEScooter(): bool
@@ -30,7 +37,7 @@ class DockingStation
         // and check againt array count
 
         $this->counter++;
-        $this->escooter = $escooter;
+        array_push($this->escooters, $escooter);
         if($this->counter > $this->capacity ) {
             throw new Exception('No capacity to accept another scooter');
         }

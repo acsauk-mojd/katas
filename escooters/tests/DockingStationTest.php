@@ -27,14 +27,17 @@ class DockingStationTest extends TestCase
         $this->station  = new DockingStation();
         $this->escooter = new EScooter();
     }
+
     //As a person,
     //So that I can ride an escooter,
     //I need a docking station to release a escooter.
     public function testCanReleaseEScooter()
     {
-        $this->station -> dockEscooter($this->escooter);
-        $this->escooter = $this->station->releaseEScooter();
-        $this->assertInstanceOf(EScooter::class, $this->escooter);
+        $escooter = new EScooter();
+        $this->station->dockEscooter($escooter);
+        $releasedEscooter = $this->station->releaseEScooter();
+        $this->assertInstanceOf(EScooter::class, $releasedEscooter);
+        $this->assertSame($escooter, $releasedEscooter);
     }
 
     //As a person,
