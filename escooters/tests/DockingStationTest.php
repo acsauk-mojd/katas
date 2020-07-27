@@ -28,6 +28,10 @@ class DockingStationTest extends TestCase
         $this->escooter = new EScooter();
     }
 
+    //As a member of the public
+    //So I can decide whether to use the docking station
+    //I want to see a an escooter that has been docked
+
     //As a person,
     //So that I can ride an escooter,
     //I need a docking station to release a escooter.
@@ -47,15 +51,6 @@ class DockingStationTest extends TestCase
     {
        $isWorking = $this->escooter->isWorking();
        $this->assertTrue($isWorking, "");
-    }
-
-    //As a member of the public
-    //So I can decide whether to use the docking station
-    //I want to see a an escooter that has been docked
-    public function testIfEscooterHasBeenDocked()
-    {
-        $this->station->dockEscooter($this->escooter);
-        $this->assertEquals($this->escooter, $this->station->escooter);
     }
 
     //As a member of the public

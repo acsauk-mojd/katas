@@ -12,17 +12,16 @@ class DockingStation
 
     public function releaseEScooter()
     {
-        for ($i = 0; $i > count($this->escooters); $i++) {
-            if (!$this->escooters[$i]->isBroken()) {
-                $escooter = $this->escooters[$i];
+        if(count($this->escooters) >= 1) {
+            foreach($this->escooters as $i => $scooter) {
+                if (!$scooter->isBroken()) {
+                    return $scooter;
+                }
+
+                throw new Exception('This Escooter is broken');
             }
-        }
 
-        if(!is_null($this->escooters) && !isset($escooter)){
-            throw new Exception('This Escooter is broken');
         }
-
-        return $this->escooters;
     }
 
     public function hasDockedEScooter(): bool
