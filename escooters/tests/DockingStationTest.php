@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use App\Van;
+use PHPUnit\Exception;
 use PHPUnit\Framework\TestCase;
 use App\DockingStation;
 use App\EScooter;

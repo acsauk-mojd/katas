@@ -26,7 +26,7 @@ class DockingStation
 
     public function hasDockedEScooter(): bool
     {
-        return !is_null($this->escooter);
+        return !empty($this->escooters);
     }
 
     public function dockEscooter(EScooter $escooter)
@@ -44,8 +44,19 @@ class DockingStation
 
     public function releaseBrokenEscooters(Van $van)
     {
-        if(!is_null($this->escooter) && $this->escooter->isBroken()){
-            $van->collectBrokenEscooter($this->escooter);
+        if(!empty($this->escooters)){
+
+            if(count($this->escooters) >= 1) {
+                foreach($this->escooters as $i => $scooter) {
+                    if ($scooter->isBroken()) {
+                        unset($this->escooters[$i]);
+                        $van->collectBrokenEscooter($scooter);
+                    }
+                }
+
+            }
         }
+
+        return $van;
     }
 }
