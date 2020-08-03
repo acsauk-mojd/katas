@@ -35,28 +35,20 @@ And to total:
 
 #### Acceptance Criteria
 
-```ruby
-scrabble = Scrabble.new('')
-scrabble.score # => 0
+```php
+Scrabble::calculate(''); # => 0
 
-scrabble = Scrabble.new(" \t\n")
-scrabble.score # => 0
+Scrabble::calculate(" \t\n") # => 0
 
-scrabble = Scrabble.new(nil)
-scrabble.score # => 0
+Scrabble::calculate(nil) # => 0
 
-scrabble = Scrabble.new('a')
-scrabble.score # => 1
+Scrabble::calculate('a') # => 1
 
-scrabble = Scrabble.new('f')
-scrabble.score # => 4
+Scrabble::calculate('f') # => 4
 
-scrabble = Scrabble.new('street')
-scrabble.score # => 6
+Scrabble::calculate('street') # => 6
 
-scrabble = Scrabble.new('quirky')
-scrabble.score # => 22
+Scrabble::calculate('quirky') # => 22
 
-scrabble = Scrabble.new('OXYPHENBUTAZONE')
-scrabble.score # => 41
+Scrabble::calculate('OXYPHENBUTAZONE') # => 41
 ```

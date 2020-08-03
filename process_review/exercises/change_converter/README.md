@@ -4,16 +4,18 @@ Given a number in pounds and pence, work out the most efficient way of breaking 
 
 ## Example Output
 
-```
-change_generator.convert(7.42)
+```php
+$sut = new ChangeCoverter();
+
+$sut->convert(7.42);
  => ["£5", "£1", "£1", "20p", "20p", "2p"]
-change_generator.convert(40)
+$sut->convert(40);
  => ["£20", "£20"]
-change_generator.convert(16.30)
+$sut->convert(16.30);
  => ["£10", "£5", "£1", "20p", "10p"]
-change_generator.convert(19.99)
+$sut->convert(19.99);
  => ["£10", "£5", "£1", "£1", "1", "£1", "50p", "20p", "20p", "5p", "2p", "2p"]
-change_generator.convert(76.81)
+$sut->convert(76.81);
  => ["£50", "£20", "£5", "£1", "50p", "20p", "10p", "1p"]
 ```
 

@@ -6,8 +6,6 @@ An app that repeats what you say until you exit it!
 
 - The app runs on the command line or.
 
-- It's fine to use Ruby or JavaScript.
-
 - When the app runs you are prompted with a phrase to say something
 
 - The output also has information about the date and time formatted as below.
@@ -19,7 +17,7 @@ An app that repeats what you say until you exit it!
 Example interaction:
 
 ```
-$ ruby echo.rb
+$ php echo.php
 Say something:
 hello, world
 2018-01-09 | 16:26 | You said: 'hello, world'!

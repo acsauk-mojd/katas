@@ -2,7 +2,6 @@
 
 Write a program that returns the lyrics to the classic children's song.
 
-
 ## Lyrics
 
 Hint: pay particular attention to the penultimate and final verses!
@@ -99,8 +98,8 @@ There'll be no green bottles
 Hanging on the wall
 ```
 
-## Extension Options
-
-- Generate the lyrics for Ninety-Nine Green Bottles.
-
-- Write a Green Bottles lyrics generator that will take a given number, and return the lyrics from that number onwards.
+```php
+GreenBottlerSinger::sing(3); # sings three verses from 3 through to 1
+GreenBottlerSinger::sing(10); # sings ten verses from 10 through to 1
+GreenBottlerSinger::sing(99); # sings ninety nine verses from 99 through to 1
+```

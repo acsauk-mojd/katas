@@ -1,6 +1,6 @@
 ## Checkout
 
-The purpose of this challenge is to implement a supermarket checkout that calculates the total price of a number of items - to be run in a REPL like IRB. Don't worry about I/O.
+The purpose of this challenge is to implement a supermarket checkout that calculates the total price of a number of items - to be run in a REPL like PsySH or just passed to tests. Don't worry about I/O.
 
 
 ### Requirements
@@ -27,7 +27,8 @@ Notes:
  - For any illegal input (non capitals) simply return -1
 
 **In order to complete the round you need to implement the following method:
-     checkout(String) -> Integer**
+     public function checkout(String $skus): Integer
+     {}**
 
 Where:
  - param[0] = eg. 'AAB', a String containing the SKUs of all the products in the basket
@@ -35,12 +36,14 @@ Where:
 
 ### Acceptance Criteria
 
-```ruby
-shop.checkout('aBc') # => -1
-shop.checkout('-B8x') # => -1
-shop.checkout(18) # => -1
-shop.checkout('AA') # => 100
-shop.checkout('ABCD') # => 115
-shop.checkout('AAA') # => 130
-shop.checkout('AAAAAA') # => 260
+```php
+$sut = new Shop();
+
+$sut->checkout('aBc') # => -1
+$sut->checkout('-B8x') # => -1
+$sut->checkout(18) # => -1
+$sut->checkout('AA') # => 100
+$sut->checkout('ABCD') # => 115
+$sut->checkout('AAA') # => 130
+$sut->checkout('AAAAAA') # => 260
 ```

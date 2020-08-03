@@ -12,9 +12,11 @@ You always walk only a single block in a direction and you know it takes you one
 _Note: you will always receive a valid array containing a random assortment of direction letters ('n', 's', 'e', or 'w' only). It will never give you an empty array (that's not a walk, that's standing still!)._
 
 #### Acceptance Criteria
-```ruby
-ten_minute_walk?(['w', 's', 'e', 'e', 'n', 'n', 'e', 's', 'w', 'w']) # => true
-ten_minute_walk?(['w', 's', 'e', 'n', 'n', 'e', 's', 'w', 'w', 'w']) # => false
-ten_minute_walk?(['w', 's', 'e', 's', 's', 'e', 's', 'w', 'n', 'n']) # => false
-ten_minute_walk?(['w', 's']) # => false
+```php
+$sut = new WalkApp();
+
+$sut->tenMinuteWalk(['w', 's', 'e', 'e', 'n', 'n', 'e', 's', 'w', 'w']) # => true
+$sut->tenMinuteWalk?(['w', 's', 'e', 'n', 'n', 'e', 's', 'w', 'w', 'w']) # => false
+$sut->tenMinuteWalk?(['w', 's', 'e', 's', 's', 'e', 's', 'w', 'n', 'n']) # => false
+$sut->tenMinuteWalk?(['w', 's']) # => false
 ```
