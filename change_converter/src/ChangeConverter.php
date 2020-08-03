@@ -4,8 +4,9 @@ namespace App;
 
 class ChangeConverter
 {
-    public function convert($float)
+    //Array $notesAndCoins;
+    public function convert(Float $change)
     {
-        throw new ErrorException('Input was not a float.');
+        return [];
     }
 }

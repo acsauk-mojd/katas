@@ -13,10 +13,18 @@ class ChangeConverterTest extends TestCase
         $this->assertInstanceOf(ChangeConverter::class, $test);
     }
 
-    public function testRaisesExceptionIfInputNotFloat()
+    public function testInput()
     {
         $test = new ChangeConverter();
-            $this->expectExceptionMessage('Input was not a float.');
-            $test->convert('string');
+        $results = $test->convert(0);
+        $this->assertIsArray($results);
     }
+
+    public function testInputNotFloat()
+    {
+        $test = new ChangeConverter();
+        $this->expectException(\TypeError::class);
+        $results = $test->convert("string");
+    }
+
 }
