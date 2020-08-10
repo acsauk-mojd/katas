@@ -29,6 +29,16 @@ class ChangeConverter
             $change -= 5.00;
         }
 
+        while ($change / 1.00 >= 1){
+            array_push($results, "£1");
+            $change -= 1.00;
+        }
+
+        while ($change / 0.50 >= 1){
+            array_push($results, "50p");
+            $change -= 0.50;
+        }
+
         return $results;
     }
 }
