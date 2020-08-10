@@ -13,10 +13,23 @@ class ChangeConverterTest extends TestCase
         $this->assertInstanceOf(ChangeConverter::class, $test);
     }
 
-    public function testRaisesExceptionIfInputNotFloat()
+    public function testOutputIsArray()
     {
         $test = new ChangeConverter();
-            $this->expectExceptionMessage('Input was not a float.');
-            $test->convert('string');
+            $results = $test->convert(5.0);
+            $this->assertIsArray($results);
     }
+
+    public function testValueReturnedEqualsInputValue()
+    {
+        $test = new ChangeConverter();
+        $this->assertEquals(["£20", "£10", "£5", "£1", "£1"], $test->convert(37.00));
+    }
+
+    public function testAllDemoninationsWork()
+    {
+        $test = new ChangeConverter();
+        $this->assertEquals(["£20", "£10", "£5", "£1", "50p", "20p", "10p", "5p", "2p", "1p"], $test->convert(36.88));
+    }
+
 }
