@@ -8,14 +8,25 @@ class ChangeConverter
     public function convert(Float $change)
     {
         $results = [];
-        if ($change >= 10.00) {
-            $tens = intval($change/10.00);
-            $i = 0;
-            while ($i < $tens) {
-                array_push($results, "£10");
-                $change -= 10.00;
-                $i++;
-            }
+
+        while ($change / 50.00 >= 1){
+            array_push($results, "£50");
+            $change -= 50.00;
+        }
+
+        while ($change / 20.00 >= 1){
+            array_push($results, "£20");
+            $change -= 20.00;
+        }
+
+        while ($change / 10.00 >= 1){
+            array_push($results, "£10");
+            $change -= 10.00;
+        }
+
+        while ($change / 5.00 >= 1){
+            array_push($results, "£5");
+            $change -= 5.00;
         }
 
         return $results;
