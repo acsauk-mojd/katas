@@ -7,6 +7,17 @@ class ChangeConverter
     //Array $notesAndCoins;
     public function convert(Float $change)
     {
-        return [];
+        $results = [];
+        if ($change >= 10.00) {
+            $tens = intval($change/10.00);
+            $i = 0;
+            while ($i < $tens) {
+                array_push($results, "£10");
+                $change -= 10.00;
+                $i++;
+            }
+        }
+
+        return $results;
     }
 }
