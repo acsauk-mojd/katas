@@ -5,52 +5,28 @@ namespace App;
 class ChangeConverter
 {
     private $results = [];
-    private array $notesAndCoins = [50.00, 20.00, 10.00, 5.00, 2.00, 1.00, 0.50];
+    private array $notesAndCoins = [50.00, 20.00, 10.00, 5.00, 2.00, 1.00, 0.50, 0.20];
 
     public function convert(Float $change)
     {
         foreach($this->notesAndCoins as $divisor)
         {
-            while (($change / $divisor) >= 1 && $change !== 0.0){
-                if ($divisor ==  0.50) {
-                    array_push($this->results, strval(50) . "p");
+            var_dump($change / $divisor);
+            while (($change / $divisor) >= 1 and $change !== 0.0){
+               // var_dump($change / $divisor);
+                if ($divisor <= 1 ) {
+                    var_dump($divisor);
+                   // die;
+                    $test = $divisor * 100;
+                    array_push($this->results, strval($test) . "p");
                 } else {
+                    var_dump($divisor);
+                   // die;
                     array_push($this->results, "£".strval($divisor));
                 }
                 $change -= $divisor;
             }
         }
-
-//        while ($change / 50.00 >= 1){
-//            array_push($this->results, "£50");
-//            $change -= 50.00;
-//        }
-//
-//        while ($change / 20.00 >= 1){
-//            array_push($this->results, "£20");
-//            $change -= 20.00;
-//        }
-//
-//        while ($change / 10.00 >= 1){
-//            array_push($this->results, "£10");
-//            $change -= 10.00;
-//        }
-//
-//        while ($change / 5.00 >= 1){
-//            array_push($this->results, "£5");
-//            $change -= 5.00;
-//        }
-
-//        while ($change / 1.00 >= 1){
-//            array_push($this->results, "£1");
-//            $change -= 1.00;
-//        }
-//
-//        while ($change / 0.50 >= 1){
-//            array_push($this->results, "50p");
-//            $change -= 0.50;
-//        }
-
         return $this->results;
     }
 }
