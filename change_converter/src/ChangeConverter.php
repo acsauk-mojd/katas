@@ -5,21 +5,20 @@ namespace App;
 class ChangeConverter
 {
     private $results = [];
-    private array $notesAndCoins = [50.00, 20.00, 10.00, 5.00. 1.00, 0.50];
-
-    public function convertDivisor(Float $change, Float $divisor)
-    {
-        while ($change / $divisor >= $divisor){
-            array_push($this->results, "£".strval($divisor));
-            $change -= $divisor;
-        }
-    }
+    private array $notesAndCoins = [50.00, 20.00, 10.00, 5.00, 2.00, 1.00, 0.50];
 
     public function convert(Float $change)
     {
-        foreach($this->notesAndCoins as $divisor);
+        foreach($this->notesAndCoins as $divisor)
         {
-            $this->convertDivisor($change, $divisor);
+            while (($change / $divisor) >= 1 && $change !== 0.0){
+                if ($divisor ==  0.50) {
+                    array_push($this->results, strval(50) . "p");
+                } else {
+                    array_push($this->results, "£".strval($divisor));
+                }
+                $change -= $divisor;
+            }
         }
 
 //        while ($change / 50.00 >= 1){

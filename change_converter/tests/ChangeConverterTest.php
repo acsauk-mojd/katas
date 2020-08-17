@@ -19,7 +19,7 @@ class ChangeConverterTest extends TestCase
         $test = new ChangeConverter();
         $results = $test->convert(10.00);
         $this->assertIsArray($results);
-        assertEquals(["£10"], $test->convert(10.00));
+        assertEquals(["£10"], $results);
     }
 
     public function testInputNotFloat()
@@ -43,6 +43,7 @@ class ChangeConverterTest extends TestCase
             '£25 is converted to 2x £10 and 1x £5' => [["£20", "£5"], 25.00],
             '£85 is converted to 1x £50, 1x £20, 1x £10 and 1x £5' => [["£50", "£20", "£10", "£5"], 85.00],
             '£1.50 is converted to 1x £1 and 1x 50p' => [["£1", "50p"], 1.50],
+            '£1.70 is converted to 1x £1 and 1x 50p and 1x 20p' => [["£1", "50p", "20p"], 1.70],
         ];
     }
 
