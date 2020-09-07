@@ -8,26 +8,26 @@ use function PHPUnit\Framework\assertEquals;
 
 class ChangeConverterTest extends TestCase
 {
-//    public function testItsChangeConverterClass()
-//    {
-//        $test = new ChangeConverter();
-//        $this->assertInstanceOf(ChangeConverter::class, $test);
-//    }
-//
-//    public function testInput()
-//    {
-//        $test = new ChangeConverter();
-//        $results = $test->convert(10.00);
-//        $this->assertIsArray($results);
-//        assertEquals(["£10"], $results);
-//    }
-//
-//    public function testInputNotFloat()
-//    {
-//        $test = new ChangeConverter();
-//        $this->expectException(\TypeError::class);
-//        $results = $test->convert("string");
-//    }
+    public function testItsChangeConverterClass()
+    {
+        $test = new ChangeConverter();
+        $this->assertInstanceOf(ChangeConverter::class, $test);
+    }
+
+    public function testInput()
+    {
+        $test = new ChangeConverter();
+        $results = $test->convert(10.00);
+        $this->assertIsArray($results);
+        assertEquals(["£10"], $results);
+    }
+
+    public function testInputNotFloat()
+    {
+        $test = new ChangeConverter();
+        $this->expectException(\TypeError::class);
+        $results = $test->convert("string");
+    }
     /**
      * @dataProvider changeProvider
      */
