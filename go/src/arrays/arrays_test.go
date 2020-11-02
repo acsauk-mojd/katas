@@ -2,14 +2,12 @@ package arrays
 
 import "testing"
 
-func TestSum(t *testing.T) {
+func TestSumAll(t *testing.T) {
 
-	numbers := [5]int{1, 2, 3, 4, 5}
-
-	got := Sum(numbers)
-	want := 15
+	got := SumAll([]int{1, 2}, []int{0, 9})
+	want := []int{3, 9}
 
 	if got != want {
-		t.Errorf("got %d want %d given, %v", got, want, numbers)
+		t.Errorf("got %v want %v", got, want)
 	}
 }
