@@ -1,6 +1,6 @@
 package arrays
 
-func Sum(nums ...int) {
+func Sum(nums []int) int {
 	sum := 0
 	for _, num := range nums {
 		sum += num
@@ -8,9 +8,12 @@ func Sum(nums ...int) {
 	return sum
 }
 
-func SumAll(x, y []int) []int {
-	a := Sum(x)
-	b := Sum(y)
-	ans := []int{a, b}
-	return ans
+func SumAll(numbersToSum ...[]int) []int {
+	var answer []int
+
+	for _, numbers := range numbersToSum {
+		answer = append(answer, Sum(numbers))
+	}
+
+	return answer
 }
