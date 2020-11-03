@@ -8,11 +8,12 @@ func Sum(nums []int) int {
 	return sum
 }
 
-func SumAll(numbersToSum ...[]int) []int {
+func SumAllTails(numbersToSum ...[]int) []int {
 	var answer []int
 
 	for _, numbers := range numbersToSum {
-		answer = append(answer, Sum(numbers))
+		slice := numbers[0]
+		answer = append(answer, (Sum(numbers) - slice))
 	}
 
 	return answer
