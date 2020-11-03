@@ -1,13 +1,16 @@
 package arrays
 
-func Sum(x []int) int {
-	answer := 0
-	for i := 0; i < len(x); i++ {
-		answer += x[i]
+func Sum(nums ...int) {
+	sum := 0
+	for _, num := range nums {
+		sum += num
 	}
-	return answer
+	return sum
 }
 
 func SumAll(x, y []int) []int {
-	return []int{Sum(x), Sum(y)}
+	a := Sum(x)
+	b := Sum(y)
+	ans := []int{a, b}
+	return ans
 }
